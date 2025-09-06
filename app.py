@@ -19,8 +19,13 @@ db.init_app(app)
 
 # Create database tables on app startup
 with app.app_context():
-    db.create_all()
-    print("✅ Database tables initialized")
+    try:
+        db.create_all()
+        print("✅ Database tables initialized successfully")
+        print(f"Database URL: {app.config.get('SQLALCHEMY_DATABASE_URI', 'Not set')}")
+    except Exception as e:
+        print(f"❌ Database initialization failed: {e}")
+        print(f"Database URL: {app.config.get('SQLALCHEMY_DATABASE_URI', 'Not set')}")
 
 # Helper function to parse dates flexibly
 def parse_date_flexible(date_str):
@@ -647,6 +652,7 @@ def health_check():
         return jsonify({
             'status': 'healthy',
             'database': 'connected',
+            'database_url': app.config.get('SQLALCHEMY_DATABASE_URI', 'Not set')[:50] + '...',
             'timestamp': datetime.utcnow().isoformat()
         })
     except Exception as e:
@@ -654,7 +660,36 @@ def health_check():
             'status': 'unhealthy',
             'database': 'disconnected',
             'error': str(e),
+            'database_url': app.config.get('SQLALCHEMY_DATABASE_URI', 'Not set')[:50] + '...',
             'timestamp': datetime.utcnow().isoformat()
+        }), 500
+
+# Debug endpoint to check database tables
+@app.route('/debug/db')
+def debug_database():
+    """Debug endpoint to check database status"""
+    try:
+        # Check if tables exist
+        from sqlalchemy import inspect
+        inspector = inspect(db.engine)
+        tables = inspector.get_table_names()
+
+        # Check task count
+        task_count = Task.query.count()
+
+        return jsonify({
+            'database_connected': True,
+            'tables': tables,
+            'task_count': task_count,
+            'database_url': app.config.get('SQLALCHEMY_DATABASE_URI', 'Not set')[:50] + '...',
+            'has_tasks_table': 'tasks' in tables,
+            'has_app_settings_table': 'app_settings' in tables
+        })
+    except Exception as e:
+        return jsonify({
+            'database_connected': False,
+            'error': str(e),
+            'database_url': app.config.get('SQLALCHEMY_DATABASE_URI', 'Not set')[:50] + '...'
         }), 500
 
 if __name__ == '__main__':
