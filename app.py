@@ -17,6 +17,11 @@ app.config.from_object(config_class)
 # Initialize database
 db.init_app(app)
 
+# Create database tables on app startup
+with app.app_context():
+    db.create_all()
+    print("✅ Database tables initialized")
+
 # Helper function to parse dates flexibly
 def parse_date_flexible(date_str):
     """Parse date string that could be in multiple formats"""
