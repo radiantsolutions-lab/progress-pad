@@ -1905,7 +1905,23 @@
                     <i id="themeIcon" class="fas fa-moon"></i>
                     <span id="themeText" class="d-none d-sm-inline">Dark</span>
                 </button>
-      </div>
+            </div>
+
+            <!-- User Menu -->
+            <div class="dropdown">
+                <button class="btn btn-outline-secondary dropdown-toggle d-flex align-items-center" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fas fa-user-circle me-2"></i>
+                    <span class="d-none d-md-inline">{{ current_user.username }}</span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                    <li><h6 class="dropdown-header">{{ current_user.username }}</h6></li>
+                    <li><span class="dropdown-item-text small text-muted">{{ current_user.email }}</span></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="{{ url_for('logout') }}">
+                        <i class="fas fa-sign-out-alt me-2"></i>Logout
+                    </a></li>
+                </ul>
+            </div>
         </div>
     </nav>
 

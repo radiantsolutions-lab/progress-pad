@@ -1,4 +1,5 @@
-from flask import Flask, render_template, request, jsonify, send_file
+from flask import Flask, render_template, request, jsonify, send_file, redirect, url_for, flash
+from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from datetime import datetime
 import os
 import csv
@@ -6,7 +7,7 @@ from io import StringIO, BytesIO
 import json
 from dateutil.relativedelta import relativedelta
 
-from models import db, Task, AppSettings
+from models import db, Task, AppSettings, User, create_default_admin
 from config import get_config
 
 # Initialize Flask app with configuration
@@ -17,12 +18,24 @@ app.config.from_object(config_class)
 # Initialize database
 db.init_app(app)
 
+# Initialize Flask-Login
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'login'
+login_manager.login_message = 'Please log in to access this page.'
+login_manager.login_message_category = 'info'
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
+
 # Create database tables on app startup
 with app.app_context():
     try:
         db_url = app.config.get('SQLALCHEMY_DATABASE_URI', 'Not set')
         print(f"Database URL: {db_url}")
         db.create_all()
+        create_default_admin()  # Create default admin user
         print("✅ Database tables initialized successfully")
         print(f"✅ Connected to: {'PostgreSQL' if 'postgresql' in db_url else 'SQLite'}")
     except Exception as e:
@@ -63,17 +76,82 @@ def parse_date_flexible(date_str):
 
     return None
 
+# Authentication routes
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
+
+    if request.method == 'POST':
+        username = request.form.get('username')
+        password = request.form.get('password')
+
+        user = User.query.filter_by(username=username).first()
+        if user and user.check_password(password):
+            login_user(user)
+            next_page = request.args.get('next')
+            flash('Login successful!', 'success')
+            return redirect(next_page) if next_page else redirect(url_for('index'))
+        else:
+            flash('Invalid username or password', 'error')
+
+    return render_template('login.html')
+
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    flash('You have been logged out successfully.', 'info')
+    return redirect(url_for('login'))
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
+
+    if request.method == 'POST':
+        username = request.form.get('username')
+        email = request.form.get('email')
+        password = request.form.get('password')
+        confirm_password = request.form.get('confirm_password')
+
+        if password != confirm_password:
+            flash('Passwords do not match', 'error')
+            return render_template('register.html')
+
+        if User.query.filter_by(username=username).first():
+            flash('Username already exists', 'error')
+            return render_template('register.html')
+
+        if User.query.filter_by(email=email).first():
+            flash('Email already registered', 'error')
+            return render_template('register.html')
+
+        user = User(username=username, email=email)
+        user.set_password(password)
+        db.session.add(user)
+        db.session.commit()
+
+        flash('Registration successful! Please log in.', 'success')
+        return redirect(url_for('login'))
+
+    return render_template('register.html')
+
 # Load tasks from database
 def load_tasks():
-    """Load all active (non-deleted) tasks from database"""
-    tasks_db = Task.query.filter(Task.status != "Deleted").all()
-    return [task.to_dict() for task in tasks_db]
+    """Load all active (non-deleted) tasks for current user"""
+    if current_user.is_authenticated:
+        tasks_db = Task.query.filter_by(user_id=current_user.id).filter(Task.status != "Deleted").all()
+        return [task.to_dict() for task in tasks_db]
+    return []
 
 # Load archived (deleted) tasks
 def load_archived_tasks():
-    """Load all deleted/archived tasks from database"""
-    tasks_db = Task.query.filter_by(status="Deleted").all()
-    return [task.to_dict() for task in tasks_db]
+    """Load all deleted/archived tasks for current user"""
+    if current_user.is_authenticated:
+        tasks_db = Task.query.filter_by(user_id=current_user.id, status="Deleted").all()
+        return [task.to_dict() for task in tasks_db]
+    return []
 
 # Save a new task to database
 def add_task(data):
@@ -112,7 +190,8 @@ def add_task(data):
         due_date=parse_date_flexible(data.get('Due Date')),
         current_action_plan=data.get('Current Action Plan'),
         action_plan_history=f"[{datetime.today().strftime('%Y-%m-%d')}]\n{data.get('Current Action Plan', '').strip()}" if data.get('Current Action Plan') else '',
-        custom_fields=custom_fields if custom_fields else None
+        custom_fields=custom_fields if custom_fields else None,
+        user_id=current_user.id
     )
 
     db.session.add(task)
@@ -237,6 +316,7 @@ def save_settings(data):
 
 # Load tasks view
 @app.route('/')
+@login_required
 def index():
     tasks = load_tasks()
     settings = load_settings()
