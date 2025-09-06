@@ -34,10 +34,17 @@ with app.app_context():
     try:
         db_url = app.config.get('SQLALCHEMY_DATABASE_URI', 'Not set')
         print(f"Database URL: {db_url}")
+
+        # Drop and recreate tables if needed (for migration)
+        print("Dropping existing tables...")
+        db.drop_all()
+        print("Creating new tables...")
         db.create_all()
+
         create_default_admin()  # Create default admin user
         print("✅ Database tables initialized successfully")
         print(f"✅ Connected to: {'PostgreSQL' if 'postgresql' in db_url else 'SQLite'}")
+        print("✅ Default admin user created")
     except Exception as e:
         print(f"❌ Database initialization failed: {e}")
         print(f"Database URL: {app.config.get('SQLALCHEMY_DATABASE_URI', 'Not set')}")
@@ -110,30 +117,35 @@ def register():
         return redirect(url_for('index'))
 
     if request.method == 'POST':
-        username = request.form.get('username')
-        email = request.form.get('email')
-        password = request.form.get('password')
-        confirm_password = request.form.get('confirm_password')
+        try:
+            username = request.form.get('username')
+            email = request.form.get('email')
+            password = request.form.get('password')
+            confirm_password = request.form.get('confirm_password')
 
-        if password != confirm_password:
-            flash('Passwords do not match', 'error')
+            if password != confirm_password:
+                flash('Passwords do not match', 'error')
+                return render_template('register.html')
+
+            if User.query.filter_by(username=username).first():
+                flash('Username already exists', 'error')
+                return render_template('register.html')
+
+            if User.query.filter_by(email=email).first():
+                flash('Email already registered', 'error')
+                return render_template('register.html')
+
+            user = User(username=username, email=email)
+            user.set_password(password)
+            db.session.add(user)
+            db.session.commit()
+
+            flash('Registration successful! Please log in.', 'success')
+            return redirect(url_for('login'))
+        except Exception as e:
+            print(f"Registration error: {e}")
+            flash(f'Registration failed: {str(e)}', 'error')
             return render_template('register.html')
-
-        if User.query.filter_by(username=username).first():
-            flash('Username already exists', 'error')
-            return render_template('register.html')
-
-        if User.query.filter_by(email=email).first():
-            flash('Email already registered', 'error')
-            return render_template('register.html')
-
-        user = User(username=username, email=email)
-        user.set_password(password)
-        db.session.add(user)
-        db.session.commit()
-
-        flash('Registration successful! Please log in.', 'success')
-        return redirect(url_for('login'))
 
     return render_template('register.html')
 
@@ -756,15 +768,18 @@ def debug_database():
         inspector = inspect(db.engine)
         tables = inspector.get_table_names()
 
-        # Check task count
+        # Check counts
         task_count = Task.query.count()
+        user_count = User.query.count()
 
         return jsonify({
             'database_connected': True,
             'tables': tables,
             'task_count': task_count,
+            'user_count': user_count,
             'database_url': app.config.get('SQLALCHEMY_DATABASE_URI', 'Not set')[:50] + '...',
             'has_tasks_table': 'tasks' in tables,
+            'has_users_table': 'users' in tables,
             'has_app_settings_table': 'app_settings' in tables
         })
     except Exception as e:
