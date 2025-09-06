@@ -1,0 +1,1359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Standup Tasks - Modern Dashboard</title>
+
+    <!-- Core Dependencies -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+
+    <!-- Modern Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            /* Modern Color Palette */
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #64748b;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --info: #06b6d4;
+
+            /* Neutral Colors */
+            --gray-50: #f8fafc;
+            --gray-100: #f1f5f9;
+            --gray-200: #e2e8f0;
+            --gray-300: #cbd5e1;
+            --gray-400: #94a3b8;
+            --gray-500: #64748b;
+            --gray-600: #475569;
+            --gray-700: #334155;
+            --gray-800: #1e293b;
+            --gray-900: #0f172a;
+
+            /* Spacing & Layout */
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 24px;
+
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            color: var(--gray-800);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Navigation */
+        .navbar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--gray-200);
+            box-shadow: var(--shadow-sm);
+            padding: 1rem 0;
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .navbar-brand:hover {
+            color: var(--primary-dark);
+        }
+
+        /* Main Layout */
+        .main-content {
+            min-height: calc(100vh - 80px);
+            padding: 2rem 0;
+        }
+
+        .dashboard-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+
+        /* Welcome Section */
+        .welcome-section {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .welcome-title {
+            font-size: 3rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        .welcome-subtitle {
+            font-size: 1.25rem;
+            color: var(--gray-600);
+            font-weight: 400;
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .stats-card {
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--gray-200);
+            transition: all 0.2s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stats-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+        }
+
+        .stats-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .stats-icon {
+            width: 3rem;
+            height: 3rem;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+        }
+
+        .stats-completed .stats-icon { background: linear-gradient(135deg, var(--success), #059669); color: white; }
+        .stats-in-progress .stats-icon { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; }
+        .stats-overdue .stats-icon { background: linear-gradient(135deg, var(--danger), #dc2626); color: white; }
+        .stats-total .stats-icon { background: linear-gradient(135deg, var(--gray-400), var(--gray-500)); color: white; }
+
+        .stats-number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 0.25rem;
+            color: var(--gray-900);
+        }
+
+        .stats-label {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--gray-600);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Action Bar */
+        .action-bar {
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--gray-200);
+        }
+
+        .action-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .primary-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+        }
+
+        .btn-modern {
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            font-size: 0.875rem;
+            border: none;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, var(--primary-dark), #4338ca);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, var(--success), #059669);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: linear-gradient(135deg, #059669, #047857);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-secondary {
+            background: var(--gray-100);
+            color: var(--gray-700);
+            border: 1px solid var(--gray-300);
+        }
+
+        .btn-secondary:hover {
+            background: var(--gray-200);
+            border-color: var(--gray-400);
+        }
+
+        /* View Toggle */
+        .view-toggle {
+            display: flex;
+            background: var(--gray-100);
+            border-radius: var(--radius-md);
+            padding: 0.25rem;
+            border: 1px solid var(--gray-300);
+        }
+
+        .view-toggle-btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            background: transparent;
+            color: var(--gray-600);
+            border-radius: var(--radius-sm);
+            font-weight: 500;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .view-toggle-btn.active {
+            background: white;
+            color: var(--gray-900);
+            box-shadow: var(--shadow-sm);
+        }
+
+        /* Filters */
+        .filters-section {
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--gray-200);
+        }
+
+        .filter-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+
+        .filter-title {
+            font-weight: 600;
+            color: var(--gray-900);
+        }
+
+        .quick-filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .quick-filter-btn {
+            padding: 0.375rem 0.75rem;
+            border: 1px solid var(--gray-300);
+            background: white;
+            color: var(--gray-700);
+            border-radius: var(--radius-sm);
+            font-size: 0.75rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .quick-filter-btn:hover {
+            background: var(--gray-50);
+            border-color: var(--gray-400);
+        }
+
+        .quick-filter-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .advanced-filters {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .filter-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--gray-700);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .filter-select {
+            padding: 0.5rem;
+            border: 1px solid var(--gray-300);
+            border-radius: var(--radius-sm);
+            font-size: 0.875rem;
+            background: white;
+            cursor: pointer;
+        }
+
+        .filter-select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        /* Tasks Grid */
+        .tasks-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .task-card {
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--gray-200);
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .task-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .task-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+
+        .task-id {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--gray-500);
+            background: var(--gray-100);
+            padding: 0.25rem 0.5rem;
+            border-radius: var(--radius-sm);
+        }
+
+        .task-status {
+            padding: 0.25rem 0.75rem;
+            border-radius: var(--radius-md);
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-completed { background: #dcfce7; color: #166534; }
+        .status-in-progress { background: #dbeafe; color: #1e40af; }
+        .status-not-started { background: #f3f4f6; color: #374151; }
+        .status-on-hold { background: #fef3c7; color: #92400e; }
+
+        .task-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--gray-900);
+            margin-bottom: 0.5rem;
+            line-height: 1.4;
+        }
+
+        .task-description {
+            color: var(--gray-600);
+            margin-bottom: 1rem;
+            line-height: 1.5;
+        }
+
+        .task-meta {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .task-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            color: var(--gray-600);
+        }
+
+        .task-meta-item i {
+            width: 16px;
+            color: var(--gray-400);
+        }
+
+        .task-priority {
+            padding: 0.125rem 0.5rem;
+            border-radius: var(--radius-sm);
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .priority-critical { background: #fee2e2; color: #dc2626; }
+        .priority-high { background: #fed7aa; color: #ea580c; }
+        .priority-medium { background: #fde68a; color: #d97706; }
+        .priority-low { background: #d1fae5; color: #059669; }
+
+        .task-actions {
+            display: flex;
+            gap: 0.5rem;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .task-card:hover .task-actions {
+            opacity: 1;
+        }
+
+        .task-action-btn {
+            width: 2rem;
+            height: 2rem;
+            border-radius: var(--radius-sm);
+            border: none;
+            background: transparent;
+            color: var(--gray-400);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .task-action-btn:hover {
+            background: var(--gray-100);
+            color: var(--gray-600);
+        }
+
+        /* Kanban Board */
+        .kanban-board {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .kanban-column {
+            background: var(--gray-50);
+            border-radius: var(--radius-lg);
+            padding: 1rem;
+            min-height: 500px;
+        }
+
+        .kanban-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .kanban-title {
+            font-weight: 600;
+            color: var(--gray-900);
+        }
+
+        .kanban-count {
+            background: var(--gray-200);
+            color: var(--gray-700);
+            padding: 0.125rem 0.5rem;
+            border-radius: var(--radius-sm);
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .kanban-cards {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .kanban-card {
+            background: white;
+            border-radius: var(--radius-md);
+            padding: 1rem;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--gray-200);
+            cursor: move;
+            transition: all 0.2s ease;
+        }
+
+        .kanban-card:hover {
+            box-shadow: var(--shadow);
+            transform: translateY(-1px);
+        }
+
+        .kanban-card.dragging {
+            opacity: 0.5;
+            transform: rotate(2deg);
+        }
+
+        /* Empty States */
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1.5rem;
+            color: var(--gray-500);
+        }
+
+        .empty-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .empty-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--gray-900);
+            margin-bottom: 0.5rem;
+        }
+
+        .empty-description {
+            color: var(--gray-600);
+            margin-bottom: 1.5rem;
+        }
+
+        /* Floating Action Button */
+        .fab {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 3.5rem;
+            height: 3.5rem;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border: none;
+            color: white;
+            font-size: 1.25rem;
+            cursor: pointer;
+            box-shadow: var(--shadow-lg);
+            transition: all 0.2s ease;
+            z-index: 1000;
+        }
+
+        .fab:hover {
+            transform: scale(1.1);
+            box-shadow: var(--shadow-xl);
+        }
+
+        /* Modals */
+        .modal-content {
+            border: none;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            border: none;
+            border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+            padding: 1.5rem;
+        }
+
+        .modal-title {
+            font-weight: 600;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: var(--gray-700);
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .form-control {
+            padding: 0.75rem;
+            border: 1px solid var(--gray-300);
+            border-radius: var(--radius-md);
+            font-size: 0.875rem;
+            transition: all 0.2s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .welcome-title {
+                font-size: 2rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .primary-actions {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .btn-modern {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .advanced-filters {
+                grid-template-columns: 1fr;
+            }
+
+            .tasks-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .kanban-board {
+                grid-template-columns: 1fr;
+            }
+
+            .fab {
+                bottom: 1rem;
+                right: 1rem;
+                width: 3rem;
+                height: 3rem;
+                font-size: 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .dashboard-container {
+                padding: 0 1rem;
+            }
+
+            .welcome-section {
+                margin-bottom: 2rem;
+            }
+
+            .stats-card {
+                padding: 1.5rem;
+            }
+
+            .task-card {
+                padding: 1rem;
+            }
+        }
+
+        /* Loading Animation */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        /* Utility Classes */
+        .text-gradient {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .shadow-soft {
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.08);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="dashboard-container">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-tasks"></i>
+                Standup Tasks
+            </a>
+            <div class="d-flex align-items-center gap-3">
+                <span id="currentTime" class="text-muted small"></span>
+                <span id="greetingBadge" class="badge bg-primary"></span>
+            </div>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="dashboard-container">
+            <!-- Welcome Section -->
+            <section class="welcome-section">
+                <h1 class="welcome-title">Weekly Standup Dashboard</h1>
+                <p class="welcome-subtitle">Track your tasks and stay aligned with your team</p>
+            </section>
+
+            <!-- Stats Overview -->
+            <section class="stats-grid">
+                <div class="stats-card stats-completed">
+                    <div class="stats-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="stats-number">{{ summary.completed }}</div>
+                    <div class="stats-label">Completed</div>
+                </div>
+
+                <div class="stats-card stats-in-progress">
+                    <div class="stats-icon">
+                        <i class="fas fa-play-circle"></i>
+                    </div>
+                    <div class="stats-number">{{ summary.in_progress }}</div>
+                    <div class="stats-label">In Progress</div>
+                </div>
+
+                <div class="stats-card stats-overdue">
+                    <div class="stats-icon">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <div class="stats-number">{{ summary.overdue }}</div>
+                    <div class="stats-label">Overdue</div>
+                </div>
+
+                <div class="stats-card stats-total">
+                    <div class="stats-icon">
+                        <i class="fas fa-list"></i>
+                    </div>
+                    <div class="stats-number">{{ summary.total }}</div>
+                    <div class="stats-label">Total Tasks</div>
+                </div>
+            </section>
+
+            <!-- Action Bar -->
+            <section class="action-bar">
+                <div class="action-buttons">
+                    <div class="primary-actions">
+                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addTaskModal">
+                            <i class="fas fa-plus"></i>
+                            Add Task
+                        </button>
+                        <a href="/standup" class="btn btn-success">
+                            <i class="fas fa-users"></i>
+                            Standup View
+                        </a>
+                        <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#settingsModal">
+                            <i class="fas fa-cog"></i>
+                            Settings
+                        </button>
+                        <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#importExportModal">
+                            <i class="fas fa-exchange-alt"></i>
+                            Import/Export
+                        </button>
+                    </div>
+
+                    <!-- View Toggle -->
+                    <div class="view-toggle">
+                        <button class="view-toggle-btn active" id="cardViewBtn">
+                            <i class="fas fa-th-large"></i>
+                            Cards
+                        </button>
+                        <button class="view-toggle-btn" id="kanbanViewBtn">
+                            <i class="fas fa-columns"></i>
+                            Kanban
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Filters Section -->
+            <section class="filters-section">
+                <div class="filter-header">
+                    <h3 class="filter-title">
+                        <i class="fas fa-filter"></i>
+                        Filters & Search
+                    </h3>
+                    <button class="btn btn-sm btn-secondary" id="toggleFilters">
+                        <i class="fas fa-chevron-up"></i>
+                    </button>
+                </div>
+
+                <div class="quick-filters">
+                    <button class="quick-filter-btn" data-filter="all">
+                        <i class="fas fa-list"></i>
+                        All Tasks
+                    </button>
+                    <button class="quick-filter-btn" data-filter="completed">
+                        <i class="fas fa-check"></i>
+                        Completed
+                    </button>
+                    <button class="quick-filter-btn" data-filter="in-progress">
+                        <i class="fas fa-play"></i>
+                        In Progress
+                    </button>
+                    <button class="quick-filter-btn" data-filter="overdue">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        Overdue
+                    </button>
+                    <button class="quick-filter-btn" data-filter="high-priority">
+                        <i class="fas fa-exclamation-circle"></i>
+                        High Priority
+                    </button>
+                </div>
+
+                <div class="advanced-filters">
+                    <div class="filter-group">
+                        <label class="filter-label">Status</label>
+                        <select class="filter-select" id="statusFilter">
+                            <option value="">All Statuses</option>
+                            {% for status in settings['status_options'] %}
+                            <option value="{{ status }}">{{ status }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label class="filter-label">Priority</label>
+                        <select class="filter-select" id="priorityFilter">
+                            <option value="">All Priorities</option>
+                            {% for priority in settings['priority_options'] %}
+                            <option value="{{ priority }}">{{ priority }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label class="filter-label">Type</label>
+                        <select class="filter-select" id="typeFilter">
+                            <option value="">All Types</option>
+                            {% for type in settings['type_options'] %}
+                            <option value="{{ type }}">{{ type }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label class="filter-label">Search</label>
+                        <input type="text" class="filter-select" id="searchInput" placeholder="Search tasks...">
+                    </div>
+                </div>
+            </section>
+
+            <!-- Tasks Container -->
+            <div id="tasksContainer">
+                <!-- Card View -->
+                <div id="cardView" class="tasks-grid">
+                    {% for task in tasks %}
+                    <div class="task-card fade-in" data-status="{{ task['Status'] }}" data-priority="{{ task['Priority'] }}" data-type="{{ task['Type'] }}" data-description="{{ task['Description'] }}">
+                        <div class="task-header">
+                            <span class="task-id">{{ task['ID'] }}</span>
+                            <div class="task-actions">
+                                <button class="task-action-btn" title="Edit Task" onclick="editTask('{{ task['ID'] }}')">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="task-action-btn" title="View Details" onclick="viewTask('{{ task['ID'] }}')">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="task-action-btn" title="Delete Task" onclick="deleteTask('{{ task['ID'] }}')">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="task-title">{{ task['Description'] }}</div>
+
+                        <div class="d-flex align-items-center gap-2 mb-3">
+                            <span class="task-status status-{{ task['Status'].lower().replace(' ', '-') }}">{{ task['Status'] }}</span>
+                            <span class="task-priority priority-{{ task['Priority'].lower() }}">{{ task['Priority'] }}</span>
+                        </div>
+
+                        <div class="task-meta">
+                            <div class="task-meta-item">
+                                <i class="fas fa-tag"></i>
+                                {{ task['Type'] }}
+                            </div>
+                            <div class="task-meta-item">
+                                <i class="fas fa-folder"></i>
+                                {{ task['Category'] }}
+                            </div>
+                            {% if task['Due Date'] %}
+                            <div class="task-meta-item">
+                                <i class="fas fa-calendar"></i>
+                                {{ task['Due Date'] }}
+                            </div>
+                            {% if task['is_overdue'] %}
+                            <div class="task-meta-item text-danger">
+                                <i class="fas fa-exclamation-circle"></i>
+                                Overdue
+                            </div>
+                            {% endif %}
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Kanban View -->
+                <div id="kanbanView" class="kanban-board" style="display: none;">
+                    <!-- Not Started Column -->
+                    <div class="kanban-column">
+                        <div class="kanban-header">
+                            <h4 class="kanban-title">
+                                <i class="fas fa-circle text-muted"></i>
+                                Not Started
+                            </h4>
+                            <span class="kanban-count" id="not-started-count">0</span>
+                        </div>
+                        <div class="kanban-cards" id="not-started-column">
+                            {% for task in tasks %}
+                                {% if task['Status'] == 'Not Started' %}
+                                <div class="kanban-card" data-task-id="{{ task['ID'] }}" draggable="true">
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <span class="task-priority priority-{{ task['Priority'].lower() }} badge">{{ task['Priority'] }}</span>
+                                        <small class="text-muted">{{ task['ID'] }}</small>
+                                    </div>
+                                    <h6 class="mb-2">{{ task['Description'] }}</h6>
+                                    <div class="small text-muted">
+                                        <div><i class="fas fa-tag me-1"></i>{{ task['Type'] }}</div>
+                                        <div><i class="fas fa-folder me-1"></i>{{ task['Category'] }}</div>
+                                    </div>
+                                </div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <!-- In Progress Column -->
+                    <div class="kanban-column">
+                        <div class="kanban-header">
+                            <h4 class="kanban-title">
+                                <i class="fas fa-play text-primary"></i>
+                                In Progress
+                            </h4>
+                            <span class="kanban-count" id="in-progress-count">0</span>
+                        </div>
+                        <div class="kanban-cards" id="in-progress-column">
+                            {% for task in tasks %}
+                                {% if task['Status'] == 'In Progress' %}
+                                <div class="kanban-card" data-task-id="{{ task['ID'] }}" draggable="true">
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <span class="task-priority priority-{{ task['Priority'].lower() }} badge">{{ task['Priority'] }}</span>
+                                        <small class="text-muted">{{ task['ID'] }}</small>
+                                    </div>
+                                    <h6 class="mb-2">{{ task['Description'] }}</h6>
+                                    <div class="small text-muted">
+                                        <div><i class="fas fa-tag me-1"></i>{{ task['Type'] }}</div>
+                                        <div><i class="fas fa-folder me-1"></i>{{ task['Category'] }}</div>
+                                    </div>
+                                </div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <!-- Completed Column -->
+                    <div class="kanban-column">
+                        <div class="kanban-header">
+                            <h4 class="kanban-title">
+                                <i class="fas fa-check text-success"></i>
+                                Completed
+                            </h4>
+                            <span class="kanban-count" id="completed-count">0</span>
+                        </div>
+                        <div class="kanban-cards" id="completed-column">
+                            {% for task in tasks %}
+                                {% if task['Status'] == 'Completed' %}
+                                <div class="kanban-card" data-task-id="{{ task['ID'] }}" draggable="true">
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <span class="task-priority priority-{{ task['Priority'].lower() }} badge">{{ task['Priority'] }}</span>
+                                        <small class="text-muted">{{ task['ID'] }}</small>
+                                    </div>
+                                    <h6 class="mb-2">{{ task['Description'] }}</h6>
+                                    <div class="small text-muted">
+                                        <div><i class="fas fa-tag me-1"></i>{{ task['Type'] }}</div>
+                                        <div><i class="fas fa-folder me-1"></i>{{ task['Category'] }}</div>
+                                    </div>
+                                </div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <!-- On Hold Column -->
+                    <div class="kanban-column">
+                        <div class="kanban-header">
+                            <h4 class="kanban-title">
+                                <i class="fas fa-pause text-warning"></i>
+                                On Hold
+                            </h4>
+                            <span class="kanban-count" id="on-hold-count">0</span>
+                        </div>
+                        <div class="kanban-cards" id="on-hold-column">
+                            {% for task in tasks %}
+                                {% if task['Status'] == 'On Hold' %}
+                                <div class="kanban-card" data-task-id="{{ task['ID'] }}" draggable="true">
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <span class="task-priority priority-{{ task['Priority'].lower() }} badge">{{ task['Priority'] }}</span>
+                                        <small class="text-muted">{{ task['ID'] }}</small>
+                                    </div>
+                                    <h6 class="mb-2">{{ task['Description'] }}</h6>
+                                    <div class="small text-muted">
+                                        <div><i class="fas fa-tag me-1"></i>{{ task['Type'] }}</div>
+                                        <div><i class="fas fa-folder me-1"></i>{{ task['Category'] }}</div>
+                                    </div>
+                                </div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Empty State -->
+                {% if not tasks %}
+                <div class="empty-state">
+                    <div class="empty-icon">
+                        <i class="fas fa-inbox"></i>
+                    </div>
+                    <h3 class="empty-title">No tasks yet</h3>
+                    <p class="empty-description">Create your first task to get started with your standup dashboard.</p>
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addTaskModal">
+                        <i class="fas fa-plus"></i>
+                        Add Your First Task
+                    </button>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Floating Action Button -->
+            <button class="fab" data-bs-toggle="modal" data-bs-target="#addTaskModal">
+                <i class="fas fa-plus"></i>
+            </button>
+        </div>
+    </main>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeTime();
+            initializeFilters();
+            initializeViewToggle();
+            updateKanbanCounts();
+        });
+
+        // Time and greeting
+        function initializeTime() {
+            function updateTime() {
+                const now = new Date();
+                const timeString = now.toLocaleTimeString('en-US', {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    hour12: true
+                });
+                document.getElementById('currentTime').textContent = timeString;
+
+                const hour = now.getHours();
+                let greeting = 'Good morning!';
+                if (hour >= 12 && hour < 17) greeting = 'Good afternoon!';
+                else if (hour >= 17) greeting = 'Good evening!';
+
+                document.getElementById('greetingBadge').textContent = greeting;
+            }
+
+            updateTime();
+            setInterval(updateTime, 60000); // Update every minute
+        }
+
+        // View toggle functionality
+        function initializeViewToggle() {
+            const cardViewBtn = document.getElementById('cardViewBtn');
+            const kanbanViewBtn = document.getElementById('kanbanViewBtn');
+            const cardView = document.getElementById('cardView');
+            const kanbanView = document.getElementById('kanbanView');
+
+            cardViewBtn.addEventListener('click', function() {
+                cardView.style.display = 'grid';
+                kanbanView.style.display = 'none';
+                cardViewBtn.classList.add('active');
+                kanbanViewBtn.classList.remove('active');
+            });
+
+            kanbanViewBtn.addEventListener('click', function() {
+                cardView.style.display = 'none';
+                kanbanView.style.display = 'grid';
+                kanbanViewBtn.classList.add('active');
+                cardViewBtn.classList.remove('active');
+                initializeDragAndDrop();
+            });
+        }
+
+        // Filter functionality
+        function initializeFilters() {
+            const statusFilter = document.getElementById('statusFilter');
+            const priorityFilter = document.getElementById('priorityFilter');
+            const typeFilter = document.getElementById('typeFilter');
+            const searchInput = document.getElementById('searchInput');
+            const quickFilters = document.querySelectorAll('.quick-filter-btn');
+
+            function applyFilters() {
+                const statusValue = statusFilter.value;
+                const priorityValue = priorityFilter.value;
+                const typeValue = typeFilter.value;
+                const searchValue = searchInput.value.toLowerCase();
+
+                const taskCards = document.querySelectorAll('.task-card');
+
+                taskCards.forEach(card => {
+                    const cardStatus = card.dataset.status;
+                    const cardPriority = card.dataset.priority;
+                    const cardType = card.dataset.type;
+                    const cardDescription = card.dataset.description;
+
+                    const matchesStatus = !statusValue || cardStatus === statusValue;
+                    const matchesPriority = !priorityValue || cardPriority === priorityValue;
+                    const matchesType = !typeValue || cardType === typeValue;
+                    const matchesSearch = !searchValue ||
+                        cardDescription.toLowerCase().includes(searchValue) ||
+                        card.querySelector('.task-title').textContent.toLowerCase().includes(searchValue);
+
+                    if (matchesStatus && matchesPriority && matchesType && matchesSearch) {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+
+                updateKanbanCounts();
+            }
+
+            // Event listeners
+            statusFilter.addEventListener('change', applyFilters);
+            priorityFilter.addEventListener('change', applyFilters);
+            typeFilter.addEventListener('change', applyFilters);
+            searchInput.addEventListener('input', applyFilters);
+
+            // Quick filters
+            quickFilters.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    // Remove active class from all buttons
+                    quickFilters.forEach(b => b.classList.remove('active'));
+                    // Add active class to clicked button
+                    this.classList.add('active');
+
+                    const filterType = this.dataset.filter;
+
+                    // Reset all filters
+                    statusFilter.value = '';
+                    priorityFilter.value = '';
+                    typeFilter.value = '';
+                    searchInput.value = '';
+
+                    // Apply quick filter
+                    if (filterType === 'completed') {
+                        statusFilter.value = 'Completed';
+                    } else if (filterType === 'in-progress') {
+                        statusFilter.value = 'In Progress';
+                    } else if (filterType === 'high-priority') {
+                        priorityFilter.value = 'High';
+                    }
+
+                    applyFilters();
+                });
+            });
+        }
+
+        // Update Kanban column counts
+        function updateKanbanCounts() {
+            const columns = ['not-started', 'in-progress', 'completed', 'on-hold'];
+
+            columns.forEach(column => {
+                const columnEl = document.getElementById(`${column}-column`);
+                const countEl = document.getElementById(`${column}-count`);
+
+                if (columnEl && countEl) {
+                    const visibleCards = columnEl.querySelectorAll('.kanban-card:not([style*="display: none"])');
+                    countEl.textContent = visibleCards.length;
+                }
+            });
+        }
+
+        // Drag and drop functionality
+        function initializeDragAndDrop() {
+            const kanbanCards = document.querySelectorAll('.kanban-card');
+            const kanbanColumns = document.querySelectorAll('.kanban-cards');
+
+            kanbanCards.forEach(card => {
+                card.addEventListener('dragstart', handleDragStart);
+                card.addEventListener('dragend', handleDragEnd);
+            });
+
+            kanbanColumns.forEach(column => {
+                column.addEventListener('dragover', handleDragOver);
+                column.addEventListener('drop', handleDrop);
+            });
+        }
+
+        function handleDragStart(e) {
+            e.target.classList.add('dragging');
+            e.dataTransfer.setData('text/plain', e.target.dataset.taskId);
+        }
+
+        function handleDragEnd(e) {
+            e.target.classList.remove('dragging');
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.currentTarget.classList.add('drag-over');
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            e.currentTarget.classList.remove('drag-over');
+
+            const taskId = e.dataTransfer.getData('text/plain');
+            const draggedElement = document.querySelector(`[data-task-id="${taskId}"]`);
+
+            if (draggedElement && e.currentTarget) {
+                e.currentTarget.appendChild(draggedElement);
+                updateKanbanCounts();
+
+                // Update task status via API
+                const newStatus = getStatusFromColumn(e.currentTarget.id);
+                if (newStatus) {
+                    updateTaskStatus(taskId, newStatus);
+                }
+            }
+        }
+
+        function getStatusFromColumn(columnId) {
+            const statusMap = {
+                'not-started-column': 'Not Started',
+                'in-progress-column': 'In Progress',
+                'completed-column': 'Completed',
+                'on-hold-column': 'On Hold'
+            };
+            return statusMap[columnId];
+        }
+
+        function updateTaskStatus(taskId, newStatus) {
+            fetch('/edit_task', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ ID: taskId, Status: newStatus })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    showNotification('Task status updated successfully!', 'success');
+                } else {
+                    showNotification('Failed to update task status', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showNotification('Failed to update task status', 'error');
+            });
+        }
+
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.className = `alert alert-${type === 'success' ? 'success' : 'danger'} alert-dismissible fade show position-fixed`;
+            notification.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+            notification.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+
+        // Placeholder functions for task actions
+        function editTask(taskId) {
+            console.log('Edit task:', taskId);
+            // Implement edit functionality
+        }
+
+        function viewTask(taskId) {
+            console.log('View task:', taskId);
+            // Implement view functionality
+        }
+
+        function deleteTask(taskId) {
+            if (confirm('Are you sure you want to delete this task?')) {
+                console.log('Delete task:', taskId);
+                // Implement delete functionality
+            }
+        }
+    </script></body>
+</html>
+

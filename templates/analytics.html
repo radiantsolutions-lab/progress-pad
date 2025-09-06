@@ -1,0 +1,1139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analytics - ProgressPad</title>
+
+    <!-- Core Dependencies -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        :root {
+            /* Light Theme */
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8fafc;
+            --bg-card: rgba(255, 255, 255, 0.9);
+            --bg-tertiary: #f1f5f9;
+            --text-primary: #0f172a;
+            --text-secondary: #64748b;
+            --primary: #3b82f6;
+            --primary-dark: #1d4ed8;
+            --border-primary: #e2e8f0;
+            --border-secondary: rgba(255, 255, 255, 0.2);
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --radius-sm: 0.375rem;
+            --radius-md: 0.5rem;
+            --radius-lg: 0.75rem;
+            --radius-xl: 1rem;
+            --gray-400: #9ca3af;
+            --gray-600: #4b5563;
+        }
+
+        [data-theme="dark"] {
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --bg-card: rgba(30, 41, 59, 0.9);
+            --bg-tertiary: #334155;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --border-primary: #334155;
+            --border-secondary: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: linear-gradient(135deg, var(--bg-primary), var(--bg-secondary));
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        /* Navigation */
+        .navbar {
+            background: var(--bg-card);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-primary);
+            padding: 1rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            letter-spacing: -0.025em;
+        }
+
+        .navbar-brand:hover {
+            transform: translateY(-1px);
+            transition: all 0.2s ease;
+        }
+
+        /* ProgressPad Logo and Brand Styles */
+        .logo-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-md);
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(29, 78, 216, 0.1));
+            transition: all 0.3s ease;
+        }
+
+        .navbar-brand:hover .logo-container {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(29, 78, 216, 0.2));
+            transform: scale(1.05);
+        }
+
+        .brand-text {
+            display: flex;
+            flex-direction: column;
+            line-height: 1.2;
+        }
+
+        .brand-name {
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: var(--text-primary);
+            letter-spacing: -0.025em;
+        }
+
+        .brand-subtitle {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+            margin-top: -2px;
+        }
+
+        .navbar-brand:hover .brand-name {
+            color: var(--primary);
+        }
+
+        /* Main Content */
+        .main-content {
+            padding: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Page Header */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin: 0;
+        }
+
+        .page-subtitle {
+            color: var(--text-secondary);
+            margin-top: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .stats-card {
+            background: var(--bg-card);
+            border-radius: var(--radius-xl);
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-primary);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stats-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--primary-dark));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .stats-card:hover::before {
+            opacity: 1;
+        }
+
+        .stats-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .stats-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+            font-size: 1.25rem;
+        }
+
+        .stats-completed .stats-icon {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+        }
+
+        .stats-in-progress .stats-icon {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
+        }
+
+        .stats-overdue .stats-icon {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+        }
+
+        .stats-total .stats-icon {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+        }
+
+        .stats-number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+            line-height: 1;
+        }
+
+        .stats-label {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .stats-trend {
+            display: flex;
+            align-items: center;
+            margin-top: 0.5rem;
+            font-size: 0.75rem;
+        }
+
+        .stats-trend.positive {
+            color: #10b981;
+        }
+
+        .stats-trend.negative {
+            color: #ef4444;
+        }
+
+        /* Charts Grid */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .chart-card {
+            background: var(--bg-card);
+            border-radius: var(--radius-xl);
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-primary);
+            transition: all 0.3s ease;
+        }
+
+        .chart-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .chart-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin: 0;
+        }
+
+        .chart-subtitle {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            margin: 0;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin: auto;
+        }
+
+        /* Detailed Analytics */
+        .analytics-section {
+            margin-bottom: 3rem;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin: 0;
+        }
+
+        .section-subtitle {
+            color: var(--text-secondary);
+            margin-top: 0.25rem;
+            font-size: 1rem;
+        }
+
+        /* Metrics Table */
+        .metrics-table {
+            background: var(--bg-card);
+            border-radius: var(--radius-xl);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-primary);
+        }
+
+        .metrics-table-header {
+            background: var(--bg-tertiary);
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid var(--border-primary);
+        }
+
+        .metrics-table-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin: 0;
+        }
+
+        .metrics-table-body {
+            padding: 0;
+        }
+
+        .metric-row {
+            display: flex;
+            align-items: center;
+            padding: 1rem 2rem;
+            border-bottom: 1px solid var(--border-primary);
+            transition: background-color 0.2s ease;
+        }
+
+        .metric-row:last-child {
+            border-bottom: none;
+        }
+
+        .metric-row:hover {
+            background: var(--bg-tertiary);
+        }
+
+        .metric-label {
+            flex: 1;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .metric-value {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .metric-rate {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-left: 0.5rem;
+        }
+
+        .metric-bar {
+            flex: 2;
+            margin-left: 2rem;
+        }
+
+        .metric-bar-bg {
+            height: 8px;
+            background: var(--bg-tertiary);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .metric-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--primary-dark));
+            border-radius: 4px;
+            transition: width 0.8s ease;
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .fade-in-up {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .slide-in {
+            animation: slideIn 0.6s ease-out;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 1rem;
+            }
+
+            .page-title {
+                font-size: 2rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .charts-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .chart-container {
+                height: 250px;
+            }
+
+            .metric-row {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+
+            .metric-bar {
+                width: 100%;
+                margin-left: 0;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+
+            .chart-card {
+                padding: 1.5rem;
+            }
+
+            .metrics-table-header,
+            .metric-row {
+                padding: 1rem;
+            }
+        }
+
+        /* Loading states */
+        .loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-secondary);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border-primary);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--text-secondary);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">
+                <div class="logo-container me-2">
+                    <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="4" y="8" width="24" height="16" rx="2" fill="url(#gradient1)"/>
+                        <rect x="8" y="12" width="16" height="2" rx="1" fill="white"/>
+                        <rect x="8" y="16" width="12" height="2" rx="1" fill="white" opacity="0.8"/>
+                        <rect x="8" y="20" width="8" height="2" rx="1" fill="white" opacity="0.6"/>
+                        <circle cx="24" cy="6" r="4" fill="url(#gradient2)"/>
+                        <text x="24" y="9" text-anchor="middle" fill="white" font-size="6" font-weight="bold">+</text>
+                        <defs>
+                            <linearGradient id="gradient1" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#3b82f6"/>
+                                <stop offset="100%" style="stop-color:#1d4ed8"/>
+                            </linearGradient>
+                            <linearGradient id="gradient2" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#10b981"/>
+                                <stop offset="100%" style="stop-color:#059669"/>
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                </div>
+                <div class="brand-text">
+                    <span class="brand-name">ProgressPad</span>
+                    <span class="brand-subtitle">Analytics Dashboard</span>
+                </div>
+            </a>
+
+            <div class="d-flex align-items-center gap-3">
+                <a href="/" class="btn btn-outline-secondary btn-sm">
+                    <i class="fas fa-arrow-left me-2"></i>Back to Tasks
+                </a>
+                <span class="text-muted small">
+                    <i class="fas fa-clock me-1"></i>Last updated: <span id="lastUpdated"></span>
+                </span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Page Header -->
+        <div class="page-header fade-in-up">
+            <div>
+                <h1 class="page-title">Analytics Dashboard</h1>
+                <p class="page-subtitle">Comprehensive insights into your task management performance</p>
+            </div>
+            <div class="d-flex gap-2">
+                <button class="btn btn-outline-primary btn-sm" onclick="refreshAnalytics()">
+                    <i class="fas fa-sync-alt me-2"></i>Refresh
+                </button>
+                <button class="btn btn-primary btn-sm" onclick="exportAnalytics()" title="Download analytics data as CSV">
+                    <i class="fas fa-file-csv me-2"></i>Export CSV Report
+                </button>
+            </div>
+        </div>
+
+        <!-- Key Metrics -->
+        <section class="stats-grid">
+            <div class="stats-card stats-total slide-in">
+                <div class="stats-icon">
+                    <i class="fas fa-list"></i>
+                </div>
+                <div class="stats-number">{{ analytics.total_tasks }}</div>
+                <div class="stats-label">Total Tasks</div>
+                <div class="stats-trend positive">
+                    <i class="fas fa-arrow-up me-1"></i>
+                    Active project
+                </div>
+            </div>
+
+            <div class="stats-card stats-completed slide-in">
+                <div class="stats-icon">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="stats-number">{{ analytics.completed_tasks }}</div>
+                <div class="stats-label">Completed</div>
+                <div class="stats-trend positive">
+                    <i class="fas fa-chart-line me-1"></i>
+                    {{ analytics.overall_completion_rate }}% completion rate
+                </div>
+            </div>
+
+            <div class="stats-card stats-in-progress slide-in">
+                <div class="stats-icon">
+                    <i class="fas fa-play-circle"></i>
+                </div>
+                <div class="stats-number">{{ analytics.in_progress_tasks }}</div>
+                <div class="stats-label">In Progress</div>
+                <div class="stats-trend">
+                    <i class="fas fa-clock me-1"></i>
+                    {{ analytics.avg_tasks_per_day }} tasks/day avg
+                </div>
+            </div>
+
+            <div class="stats-card stats-overdue slide-in">
+                <div class="stats-icon">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <div class="stats-number">{{ analytics.overdue_tasks }}</div>
+                <div class="stats-label">Overdue</div>
+                <div class="stats-trend negative">
+                    <i class="fas fa-exclamation-circle me-1"></i>
+                    Requires attention
+                </div>
+            </div>
+        </section>
+
+        <!-- Charts Section -->
+        <section class="charts-grid">
+            <!-- Task Status Distribution -->
+            <div class="chart-card slide-in">
+                <div class="chart-header">
+                    <div>
+                        <h3 class="chart-title">Task Status Distribution</h3>
+                        <p class="chart-subtitle">Current breakdown of all tasks</p>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="statusChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Completion Rate by Product -->
+            <div class="chart-card slide-in">
+                <div class="chart-header">
+                    <div>
+                        <h3 class="chart-title">Completion by Product</h3>
+                        <p class="chart-subtitle">Success rates across products</p>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="productChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Priority Distribution -->
+            <div class="chart-card slide-in">
+                <div class="chart-header">
+                    <div>
+                        <h3 class="chart-title">Priority Distribution</h3>
+                        <p class="chart-subtitle">Task breakdown by priority level</p>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="priorityChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Task Types -->
+            <div class="chart-card slide-in">
+                <div class="chart-header">
+                    <div>
+                        <h3 class="chart-title">Task Types Overview</h3>
+                        <p class="chart-subtitle">Distribution of task types</p>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="typeChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- Detailed Analytics Tables -->
+        <section class="analytics-section">
+            <div class="section-header">
+                <div>
+                    <h2 class="section-title">Detailed Breakdown</h2>
+                    <p class="section-subtitle">Comprehensive metrics for each dimension</p>
+                </div>
+            </div>
+
+            <div class="row g-4">
+                <!-- Products Analytics -->
+                <div class="col-lg-6">
+                    <div class="metrics-table">
+                        <div class="metrics-table-header">
+                            <h3 class="metrics-table-title">
+                                <i class="fas fa-building me-2"></i>Product Performance
+                            </h3>
+                        </div>
+                        <div class="metrics-table-body">
+                            {% for product, data in analytics.tasks_by_product.items() %}
+                            <div class="metric-row">
+                                <div class="metric-label">{{ product }}</div>
+                                <div class="metric-value">{{ data.total }}</div>
+                                <div class="metric-rate">{{ data.completion_rate }}%</div>
+                                <div class="metric-bar">
+                                    <div class="metric-bar-bg">
+                                        <div class="metric-bar-fill" style="width: {{ data.completion_rate }}%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Modules Analytics -->
+                <div class="col-lg-6">
+                    <div class="metrics-table">
+                        <div class="metrics-table-header">
+                            <h3 class="metrics-table-title">
+                                <i class="fas fa-cubes me-2"></i>Module Performance
+                            </h3>
+                        </div>
+                        <div class="metrics-table-body">
+                            {% for module, data in analytics.tasks_by_module.items() %}
+                            <div class="metric-row">
+                                <div class="metric-label">{{ module }}</div>
+                                <div class="metric-value">{{ data.total }}</div>
+                                <div class="metric-rate">{{ data.completion_rate }}%</div>
+                                <div class="metric-bar">
+                                    <div class="metric-bar-bg">
+                                        <div class="metric-bar-fill" style="width: {{ data.completion_rate }}%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Chart.js Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // Theme management
+        function initializeTheme() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+
+            const themeToggle = document.getElementById('themeToggle');
+            if (themeToggle) {
+                updateThemeButton(savedTheme);
+                themeToggle.addEventListener('click', toggleTheme);
+            }
+        }
+
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            updateThemeButton(newTheme);
+        }
+
+        function updateThemeButton(theme) {
+            const themeIcon = document.getElementById('themeIcon');
+            const themeText = document.getElementById('themeText');
+
+            if (themeIcon && themeText) {
+                if (theme === 'dark') {
+                    themeIcon.className = 'fas fa-sun';
+                    themeText.textContent = 'Light';
+                } else {
+                    themeIcon.className = 'fas fa-moon';
+                    themeText.textContent = 'Dark';
+                }
+            }
+        }
+
+        // Chart configurations
+        const chartColors = {
+            primary: '#3b82f6',
+            secondary: '#64748b',
+            success: '#10b981',
+            warning: '#f59e0b',
+            danger: '#ef4444',
+            info: '#06b6d4'
+        };
+
+        const chartOptions = {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        padding: 20,
+                        usePointStyle: true,
+                        font: {
+                            size: 12,
+                            weight: '500'
+                        }
+                    }
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                    titleColor: '#fff',
+                    bodyColor: '#fff',
+                    cornerRadius: 8,
+                    displayColors: true
+                }
+            }
+        };
+
+        // Status Chart
+        function createStatusChart() {
+            const ctx = document.getElementById('statusChart');
+            if (!ctx) return;
+
+            const statusData = {
+                labels: ['Not Started', 'In Progress', 'Completed', 'On Hold'],
+                datasets: [{
+                    data: [
+                        {{ analytics.not_started_tasks }},
+                        {{ analytics.in_progress_tasks }},
+                        {{ analytics.completed_tasks }},
+                        {{ analytics.on_hold_tasks }}
+                    ],
+                    backgroundColor: [
+                        chartColors.secondary,
+                        chartColors.warning,
+                        chartColors.success,
+                        chartColors.danger
+                    ],
+                    borderWidth: 0,
+                    hoverOffset: 8
+                }]
+            };
+
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: statusData,
+                options: {
+                    ...chartOptions,
+                    cutout: '70%',
+                    plugins: {
+                        ...chartOptions.plugins,
+                        legend: {
+                            ...chartOptions.plugins.legend,
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+        }
+
+        // Product Chart
+        function createProductChart() {
+            const ctx = document.getElementById('productChart');
+            if (!ctx) return;
+
+            const productLabels = {{ analytics.tasks_by_product.keys() | list | tojson }};
+            const productData = {{ analytics.tasks_by_product.values() | list | tojson }};
+
+            const chartData = {
+                labels: productLabels,
+                datasets: [{
+                    label: 'Total Tasks',
+                    data: productData.map(item => item.total),
+                    backgroundColor: chartColors.primary,
+                    borderColor: chartColors.primary,
+                    borderWidth: 2,
+                    borderRadius: 6,
+                    borderSkipped: false
+                }, {
+                    label: 'Completed',
+                    data: productData.map(item => item.completed),
+                    backgroundColor: chartColors.success,
+                    borderColor: chartColors.success,
+                    borderWidth: 2,
+                    borderRadius: 6,
+                    borderSkipped: false
+                }]
+            };
+
+            new Chart(ctx, {
+                type: 'bar',
+                data: chartData,
+                options: {
+                    ...chartOptions,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.1)'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Priority Chart
+        function createPriorityChart() {
+            const ctx = document.getElementById('priorityChart');
+            if (!ctx) return;
+
+            const priorityLabels = {{ analytics.tasks_by_priority.keys() | list | tojson }};
+            const priorityData = {{ analytics.tasks_by_priority.values() | list | tojson }};
+
+            const chartData = {
+                labels: priorityLabels,
+                datasets: [{
+                    data: priorityData.map(item => item.total),
+                    backgroundColor: [
+                        chartColors.danger,
+                        chartColors.warning,
+                        chartColors.info,
+                        chartColors.secondary
+                    ],
+                    borderWidth: 0,
+                    hoverOffset: 8
+                }]
+            };
+
+            new Chart(ctx, {
+                type: 'pie',
+                data: chartData,
+                options: {
+                    ...chartOptions,
+                    plugins: {
+                        ...chartOptions.plugins,
+                        legend: {
+                            position: 'right',
+                            labels: {
+                                ...chartOptions.plugins.legend.labels,
+                                boxWidth: 12
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Type Chart
+        function createTypeChart() {
+            const ctx = document.getElementById('typeChart');
+            if (!ctx) return;
+
+            const typeLabels = {{ analytics.tasks_by_type.keys() | list | tojson }};
+            const typeData = {{ analytics.tasks_by_type.values() | list | tojson }};
+
+            const chartData = {
+                labels: typeLabels,
+                datasets: [{
+                    label: 'Completion Rate (%)',
+                    data: typeData.map(item => item.completion_rate),
+                    backgroundColor: chartColors.primary,
+                    borderColor: chartColors.primary,
+                    borderWidth: 2,
+                    fill: true,
+                    tension: 0.4
+                }]
+            };
+
+            new Chart(ctx, {
+                type: 'line',
+                data: chartData,
+                options: {
+                    ...chartOptions,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            ticks: {
+                                callback: function(value) {
+                                    return value + '%';
+                                }
+                            },
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.1)'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Utility functions
+        function refreshAnalytics() {
+            showNotification('Refreshing analytics data...', 'info');
+            setTimeout(() => {
+                window.location.reload();
+            }, 500);
+        }
+
+        function exportAnalytics() {
+            showNotification('Generating analytics report...', 'info');
+
+            // Create a temporary link to trigger download
+            const link = document.createElement('a');
+            link.href = '/export_analytics';
+            link.style.display = 'none';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+            showNotification('Analytics report downloaded successfully!', 'success', 3000);
+        }
+
+        function showNotification(message, type = 'info', duration = 4000) {
+            const notification = document.createElement('div');
+            notification.className = `alert alert-${type === 'success' ? 'success' : type === 'error' ? 'danger' : type === 'warning' ? 'warning' : 'info'} alert-dismissible fade show position-fixed`;
+            notification.style.cssText = `
+                top: 20px;
+                right: 20px;
+                z-index: 9999;
+                min-width: 320px;
+                border: none;
+                border-radius: 12px;
+                backdrop-filter: blur(10px);
+                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            `;
+
+            const icon = type === 'success' ? 'check-circle' :
+                        type === 'error' ? 'exclamation-triangle' :
+                        type === 'warning' ? 'exclamation-circle' : 'info-circle';
+
+            notification.innerHTML = `
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-${icon} me-2"></i>
+                    <div class="flex-grow-1">${message}</div>
+                    <button type="button" class="btn-close btn-close-white" onclick="this.remove()"></button>
+                </div>
+            `;
+
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.remove();
+                }
+            }, duration);
+        }
+
+        // Initialize everything
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeTheme();
+
+            // Update last updated timestamp
+            const now = new Date();
+            const lastUpdated = document.getElementById('lastUpdated');
+            if (lastUpdated) {
+                lastUpdated.textContent = now.toLocaleString();
+            }
+
+            // Create charts with a small delay to ensure DOM is ready
+            setTimeout(() => {
+                createStatusChart();
+                createProductChart();
+                createPriorityChart();
+                createTypeChart();
+            }, 100);
+
+            // Add smooth scrolling for anchor links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                });
+            });
+
+            // Add loading animation to metric bars
+            animateMetricBars();
+        });
+
+        // Animate metric bars on scroll
+        function animateMetricBars() {
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const bars = entry.target.querySelectorAll('.metric-bar-fill');
+                        bars.forEach((bar, index) => {
+                            setTimeout(() => {
+                                bar.style.width = bar.style.width || '0%';
+                                bar.style.transition = 'width 1s ease-out';
+                            }, index * 100);
+                        });
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+
+            // Observe all metric tables
+            document.querySelectorAll('.metrics-table').forEach(table => {
+                observer.observe(table);
+            });
+        }
+
+    </script>
+</body>
+</html>
