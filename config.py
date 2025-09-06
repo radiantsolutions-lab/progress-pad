@@ -51,5 +51,9 @@ config = {
 
 def get_config():
     """Get configuration based on environment"""
+    # Always use production config if DATABASE_URL is set (Railway)
+    if os.getenv('DATABASE_URL'):
+        return ProductionConfig
+
     env = os.getenv('FLASK_ENV', 'development')
     return config.get(env, config['default'])

@@ -20,9 +20,11 @@ db.init_app(app)
 # Create database tables on app startup
 with app.app_context():
     try:
+        db_url = app.config.get('SQLALCHEMY_DATABASE_URI', 'Not set')
+        print(f"Database URL: {db_url}")
         db.create_all()
         print("✅ Database tables initialized successfully")
-        print(f"Database URL: {app.config.get('SQLALCHEMY_DATABASE_URI', 'Not set')}")
+        print(f"✅ Connected to: {'PostgreSQL' if 'postgresql' in db_url else 'SQLite'}")
     except Exception as e:
         print(f"❌ Database initialization failed: {e}")
         print(f"Database URL: {app.config.get('SQLALCHEMY_DATABASE_URI', 'Not set')}")
