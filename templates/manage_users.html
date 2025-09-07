@@ -4,24 +4,366 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manage Users - Progress-Pad</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
     <style>
+        :root {
+            --railway-black: #0f0f0f;
+            --railway-gray-900: #1a1a1a;
+            --railway-gray-800: #2a2a2a;
+            --railway-gray-700: #3a3a3a;
+            --railway-gray-600: #4a4a4a;
+            --railway-gray-500: #6a6a6a;
+            --railway-gray-400: #9a9a9a;
+            --railway-gray-300: #d1d1d1;
+            --railway-gray-200: #e5e5e5;
+            --railway-gray-100: #f5f5f5;
+            --railway-white: #ffffff;
+
+            --railway-blue: #2d7ff9;
+            --railway-blue-light: #4a90ff;
+            --railway-blue-dark: #1e5f99;
+
+            --railway-red: #ff4757;
+            --railway-green: #2ecc71;
+            --railway-orange: #ffa500;
+
+            --border-radius: 8px;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--railway-gray-100);
+            color: var(--railway-gray-900);
+            line-height: 1.5;
+            margin: 0;
+            min-height: 100vh;
+        }
+
         .navbar {
-            background: var(--bg-navbar);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            background: var(--railway-white);
+            border-bottom: 1px solid var(--railway-gray-200);
+            padding: 1rem 0;
+            box-shadow: var(--shadow-sm);
         }
-        .user-card {
-            transition: transform 0.2s, box-shadow 0.2s;
+
+        .navbar-brand {
+            font-weight: 600;
+            color: var(--railway-gray-900) !important;
+            font-size: 1.25rem;
         }
-        .user-card:hover {
+
+        .navbar-brand:hover {
+            color: var(--railway-blue) !important;
+        }
+
+        .btn {
+            font-weight: 500;
+            border-radius: var(--border-radius);
+            padding: 0.5rem 1rem;
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary {
+            background-color: var(--railway-blue);
+            border-color: var(--railway-blue);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--railway-blue-dark);
+            border-color: var(--railway-blue-dark);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-outline-secondary {
+            color: var(--railway-gray-600);
+            border-color: var(--railway-gray-300);
+        }
+
+        .btn-outline-secondary:hover {
+            background-color: var(--railway-gray-50);
+            border-color: var(--railway-gray-400);
+            color: var(--railway-gray-800);
+        }
+
+        .container-fluid {
+            max-width: 1400px;
+            padding: 0 2rem;
+        }
+
+        .page-header {
+            background: var(--railway-white);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--railway-gray-200);
+        }
+
+        .page-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--railway-gray-900);
+            margin-bottom: 0.5rem;
+        }
+
+        .page-subtitle {
+            color: var(--railway-gray-600);
+            font-size: 1rem;
+            margin-bottom: 0;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--railway-white);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--railway-gray-200);
+            transition: all 0.2s ease;
+        }
+
+        .stat-card:hover {
+            box-shadow: var(--shadow-md);
             transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
         }
-        .admin-badge {
-            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--railway-blue);
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-label {
+            color: var(--railway-gray-600);
+            font-size: 0.875rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .users-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .user-card {
+            background: var(--railway-white);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--railway-gray-200);
+            transition: all 0.2s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .user-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--railway-blue);
+        }
+
+        .user-card:hover {
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-4px);
+        }
+
+        .user-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--railway-blue), var(--railway-blue-light));
+            display: flex;
+            align-items: center;
+            justify-content: center;
             color: white;
+            font-weight: 600;
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+        }
+
+        .user-name {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--railway-gray-900);
+            margin-bottom: 0.25rem;
+        }
+
+        .user-email {
+            color: var(--railway-gray-600);
+            font-size: 0.875rem;
+            margin-bottom: 1rem;
+        }
+
+        .user-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .user-role {
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .role-admin {
+            background-color: var(--railway-red);
+            color: white;
+        }
+
+        .role-user {
+            background-color: var(--railway-gray-200);
+            color: var(--railway-gray-800);
+        }
+
+        .user-stats {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--railway-gray-600);
+            font-size: 0.875rem;
+        }
+
+        .stat-item i {
+            color: var(--railway-blue);
+        }
+
+        .user-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--railway-gray-200);
+        }
+
+        .btn-action {
+            flex: 1;
+            padding: 0.5rem;
+            font-size: 0.875rem;
+            border-radius: 6px;
+        }
+
+        .btn-danger {
+            background-color: var(--railway-red);
+            border-color: var(--railway-red);
+        }
+
+        .btn-danger:hover {
+            background-color: #e63946;
+            border-color: #e63946;
+        }
+
+        .alert {
+            border-radius: var(--border-radius);
+            border: none;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .alert-success {
+            background-color: #d1f2eb;
+            color: #0f5132;
+        }
+
+        .alert-danger {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        .modal-content {
+            border-radius: var(--border-radius);
+            border: none;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .modal-header {
+            border-bottom: 1px solid var(--railway-gray-200);
+            padding: 1.5rem;
+        }
+
+        .modal-title {
+            font-weight: 600;
+            color: var(--railway-gray-900);
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        .modal-footer {
+            border-top: 1px solid var(--railway-gray-200);
+            padding: 1.5rem;
+        }
+
+        .form-control {
+            border: 1px solid var(--railway-gray-300);
+            border-radius: 6px;
+            padding: 0.75rem;
+            font-size: 0.875rem;
+        }
+
+        .form-control:focus {
+            border-color: var(--railway-blue);
+            box-shadow: 0 0 0 3px rgba(45, 127, 249, 0.1);
+        }
+
+        .form-label {
+            font-weight: 500;
+            color: var(--railway-gray-700);
+            margin-bottom: 0.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .container-fluid {
+                padding: 0 1rem;
+            }
+
+            .page-header {
+                padding: 1.5rem;
+            }
+
+            .users-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .user-actions {
+                flex-direction: column;
+            }
+
+            .btn-action {
+                width: 100%;
+            }
         }
     </style>
 </head>
@@ -30,7 +372,7 @@
     <nav class="navbar">
         <div class="container-fluid">
             <a class="navbar-brand d-flex align-items-center" href="{{ url_for('index') }}">
-                <div class="logo-container me-2">
+                <div class="logo-container me-3">
                     <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <rect x="4" y="8" width="24" height="16" rx="2" fill="url(#gradient1)"/>
                         <rect x="8" y="12" width="16" height="2" rx="1" fill="white"/>
@@ -77,97 +419,142 @@
         </div>
     </nav>
 
-    <div class="container-fluid mt-4">
+    <div class="container-fluid py-4">
         <!-- Flash Messages -->
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
-                <div class="row">
-                    <div class="col-12">
-                        {% for category, message in messages %}
-                            <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert">
-                                {{ message }}
-                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                            </div>
-                        {% endfor %}
-                    </div>
+                <div class="mb-4">
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert">
+                            <i class="fas fa-{{ 'exclamation-triangle' if category == 'error' else 'check-circle' }} me-2"></i>
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    {% endfor %}
                 </div>
             {% endif %}
         {% endwith %}
 
-        <div class="row">
-            <div class="col-12">
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h2><i class="fas fa-users me-2"></i>User Management</h2>
-                    <a href="{{ url_for('index') }}" class="btn btn-secondary">
-                        <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
-                    </a>
+        <!-- Page Header -->
+        <div class="page-header">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <h1 class="page-title">
+                        <i class="fas fa-users-cog me-3"></i>User Management
+                    </h1>
+                    <p class="page-subtitle">Manage user accounts, permissions, and access controls</p>
+                </div>
+                <a href="{{ url_for('index') }}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+                </a>
+            </div>
+        </div>
+
+        <!-- Stats Overview -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value">{{ users|length }}</div>
+                <div class="stat-label">Total Users</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">{{ users|selectattr('is_admin')|list|length }}</div>
+                <div class="stat-label">Admin Users</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">{{ users|rejectattr('is_admin')|list|length }}</div>
+                <div class="stat-label">Regular Users</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">{{ users|map(attribute='tasks')|map('length')|sum }}</div>
+                <div class="stat-label">Total Tasks</div>
+            </div>
+        </div>
+
+        <!-- Users Grid -->
+        <div class="users-grid">
+            {% for user in users %}
+            <div class="user-card">
+                <div class="user-avatar">
+                    {{ user.username[0].upper() }}
                 </div>
 
-                <div class="row">
-                    {% for user in users %}
-                    <div class="col-md-6 col-lg-4 mb-4">
-                        <div class="card user-card h-100">
-                            <div class="card-body">
-                                <div class="d-flex justify-content-between align-items-start mb-3">
-                                    <div>
-                                        <h5 class="card-title mb-1">{{ user.username }}</h5>
-                                        <p class="card-text text-muted small mb-2">{{ user.email }}</p>
-                                        {% if user.is_admin %}
-                                        <span class="badge admin-badge">Admin</span>
-                                        {% else %}
-                                        <span class="badge bg-secondary">User</span>
-                                        {% endif %}
-                                    </div>
-                                    <div class="dropdown">
-                                        <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                                            <i class="fas fa-ellipsis-v"></i>
-                                        </button>
-                                        <ul class="dropdown-menu">
-                                            <li><button class="dropdown-item" data-bs-toggle="modal" data-bs-target="#resetPasswordModal" onclick="setUserId({{ user.id }}, '{{ user.username }}')">
-                                                <i class="fas fa-key me-2"></i>Reset Password
-                                            </button></li>
-                                            {% if user.id != current_user.id %}
-                                            <li><hr class="dropdown-divider"></li>
-                                            <li><button class="dropdown-item text-danger" data-bs-toggle="modal" data-bs-target="#deleteUserModal" onclick="setDeleteUserId({{ user.id }}, '{{ user.username }}')">
-                                                <i class="fas fa-trash me-2"></i>Delete User
-                                            </button></li>
-                                            {% endif %}
-                                        </ul>
-                                    </div>
-                                </div>
+                <div class="user-name">{{ user.username }}</div>
+                <div class="user-email">{{ user.email }}</div>
 
-                                <div class="text-muted small">
-                                    <p class="mb-1"><i class="fas fa-calendar me-1"></i>Joined: {{ user.created_at.strftime('%Y-%m-%d') }}</p>
-                                    <p class="mb-0"><i class="fas fa-tasks me-1"></i>Tasks: {{ user.tasks|length }}</p>
-                                </div>
-                            </div>
-                        </div>
+                <div class="user-meta">
+                    <span class="user-role {{ 'role-admin' if user.is_admin else 'role-user' }}">
+                        {{ 'Admin' if user.is_admin else 'User' }}
+                    </span>
+                </div>
+
+                <div class="user-stats">
+                    <div class="stat-item">
+                        <i class="fas fa-calendar"></i>
+                        <span>Joined {{ user.created_at.strftime('%b %Y') }}</span>
                     </div>
-                    {% endfor %}
+                    <div class="stat-item">
+                        <i class="fas fa-tasks"></i>
+                        <span>{{ user.tasks|length }} tasks</span>
+                    </div>
+                </div>
+
+                <div class="user-actions">
+                    <button class="btn btn-outline-primary btn-action" data-bs-toggle="modal" data-bs-target="#resetPasswordModal" onclick="setUserId({{ user.id }}, '{{ user.username }}')">
+                        <i class="fas fa-key me-2"></i>Reset Password
+                    </button>
+                    {% if user.id != current_user.id %}
+                    <button class="btn btn-outline-danger btn-action" data-bs-toggle="modal" data-bs-target="#deleteUserModal" onclick="setDeleteUserId({{ user.id }}, '{{ user.username }}')">
+                        <i class="fas fa-trash me-2"></i>Delete
+                    </button>
+                    {% endif %}
                 </div>
             </div>
+            {% endfor %}
         </div>
     </div>
 
     <!-- Reset Password Modal -->
     <div class="modal fade" id="resetPasswordModal" tabindex="-1">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Reset User Password</h5>
+                    <h5 class="modal-title">
+                        <i class="fas fa-key me-2"></i>Reset User Password
+                    </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <form id="resetPasswordForm" method="POST">
                     <div class="modal-body">
-                        <p>Reset password for user: <strong id="resetUserName"></strong></p>
-                        <div class="mb-3">
+                        <div class="text-center mb-4">
+                            <div class="user-avatar mx-auto mb-3" style="width: 64px; height: 64px; font-size: 1.5rem;">
+                                <span id="resetUserAvatar"></span>
+                            </div>
+                            <h6 class="mb-1">Reset password for</h6>
+                            <p class="text-muted mb-0" id="resetUserName"></p>
+                        </div>
+
+                        <div class="mb-4">
                             <label for="newPassword" class="form-label">New Password</label>
-                            <input type="password" class="form-control" id="newPassword" name="new_password" required>
+                            <input type="password" class="form-control" id="newPassword" name="new_password" required
+                                   placeholder="Enter new password">
+                            <div class="form-text">
+                                <i class="fas fa-info-circle me-1"></i>
+                                Password should be at least 8 characters long
+                            </div>
+                        </div>
+
+                        <div class="alert alert-info">
+                            <i class="fas fa-envelope me-2"></i>
+                            The user will need to log in with the new password on their next visit.
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-primary">Reset Password</button>
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                            <i class="fas fa-times me-2"></i>Cancel
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save me-2"></i>Reset Password
+                        </button>
                     </div>
                 </form>
             </div>
@@ -176,23 +563,48 @@
 
     <!-- Delete User Modal -->
     <div class="modal fade" id="deleteUserModal" tabindex="-1">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Delete User</h5>
+                    <h5 class="modal-title">
+                        <i class="fas fa-user-times me-2"></i>Delete User Account
+                    </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <p>Are you sure you want to delete user: <strong id="deleteUserName"></strong>?</p>
-                    <div class="alert alert-warning">
+                    <div class="text-center mb-4">
+                        <div class="user-avatar mx-auto mb-3" style="width: 64px; height: 64px; font-size: 1.5rem; background: var(--railway-red);">
+                            <span id="deleteUserAvatar"></span>
+                        </div>
+                        <h6 class="mb-1">Delete user account</h6>
+                        <p class="text-muted mb-0" id="deleteUserName"></p>
+                    </div>
+
+                    <div class="alert alert-danger">
                         <i class="fas fa-exclamation-triangle me-2"></i>
-                        This will permanently delete the user and all their tasks. This action cannot be undone.
+                        <strong>Warning:</strong> This action cannot be undone. The following data will be permanently deleted:
+                        <ul class="mb-0 mt-2">
+                            <li>User account and profile information</li>
+                            <li>All tasks associated with this user</li>
+                            <li>All task history and attachments</li>
+                        </ul>
+                    </div>
+
+                    <div class="form-check mt-3">
+                        <input class="form-check-input" type="checkbox" id="confirmDelete" required>
+                        <label class="form-check-label" for="confirmDelete">
+                            I understand that this action is irreversible
+                        </label>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-arrow-left me-2"></i>Cancel
+                    </button>
                     <form id="deleteUserForm" method="POST" style="display: inline;">
-                        <button type="submit" class="btn btn-danger">Delete User</button>
+                        <button type="submit" class="btn btn-danger" id="confirmDeleteBtn" disabled>
+                            <i class="fas fa-trash me-2"></i>Delete User Account
+                        </button>
                     </form>
                 </div>
             </div>
@@ -203,13 +615,36 @@
     <script>
         function setUserId(userId, username) {
             document.getElementById('resetUserName').textContent = username;
+            document.getElementById('resetUserAvatar').textContent = username.charAt(0).toUpperCase();
             document.getElementById('resetPasswordForm').action = `/admin/reset_user_password/${userId}`;
         }
 
         function setDeleteUserId(userId, username) {
             document.getElementById('deleteUserName').textContent = username;
+            document.getElementById('deleteUserAvatar').textContent = username.charAt(0).toUpperCase();
             document.getElementById('deleteUserForm').action = `/admin/delete_user/${userId}`;
+
+            // Reset confirmation checkbox
+            document.getElementById('confirmDelete').checked = false;
+            document.getElementById('confirmDeleteBtn').disabled = true;
         }
+
+        // Handle delete confirmation checkbox
+        document.getElementById('confirmDelete').addEventListener('change', function() {
+            document.getElementById('confirmDeleteBtn').disabled = !this.checked;
+        });
+
+        // Reset form when modals are closed
+        document.getElementById('resetPasswordModal').addEventListener('hidden.bs.modal', function() {
+            document.getElementById('newPassword').value = '';
+            document.getElementById('confirmDelete').checked = false;
+            document.getElementById('confirmDeleteBtn').disabled = true;
+        });
+
+        document.getElementById('deleteUserModal').addEventListener('hidden.bs.modal', function() {
+            document.getElementById('confirmDelete').checked = false;
+            document.getElementById('confirmDeleteBtn').disabled = true;
+        });
     </script>
 </body>
 </html>
