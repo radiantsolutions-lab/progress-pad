@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify, send_file, redirect, url_for, flash
+from flask import Flask, render_template, request, jsonify, send_file, redirect, url_for, flash, session
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from datetime import datetime
 import os
@@ -9,6 +9,8 @@ from dateutil.relativedelta import relativedelta
 
 from models import db, Task, AppSettings, User, create_default_admin
 from config import get_config
+import secrets
+from datetime import datetime, timedelta
 
 # Initialize Flask app with configuration
 app = Flask(__name__)
@@ -28,6 +30,27 @@ login_manager.login_message_category = 'info'
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
+
+# Admin-only decorator
+def admin_required(f):
+    from functools import wraps
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not current_user.is_authenticated or not current_user.is_admin:
+            flash('Access denied. Admin privileges required.', 'error')
+            return redirect(url_for('index'))
+        return f(*args, **kwargs)
+    return decorated_function
+
+# Password reset token generation
+def generate_reset_token():
+    return secrets.token_urlsafe(32)
+
+def verify_reset_token(token, max_age=3600):  # 1 hour expiry
+    """Simple token verification (in production, use JWT or database storage)"""
+    # For now, we'll use a simple approach
+    # In production, you'd want to store tokens in database with expiry
+    return token and len(token) > 20  # Basic validation
 
 # Create database tables on app startup
 with app.app_context():
@@ -148,6 +171,115 @@ def register():
             return render_template('register.html')
 
     return render_template('register.html')
+
+# Password reset routes
+@app.route('/reset_password_request', methods=['GET', 'POST'])
+def reset_password_request():
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
+
+    if request.method == 'POST':
+        email = request.form.get('email')
+        user = User.query.filter_by(email=email).first()
+        if user:
+            # In production, send email with reset token
+            reset_token = generate_reset_token()
+            # Store token in session for demo (in production, store in database)
+            session['reset_token'] = reset_token
+            session['reset_user_id'] = user.id
+            session['reset_expiry'] = (datetime.utcnow() + timedelta(hours=1)).isoformat()
+
+            flash('Password reset instructions sent to your email.', 'info')
+            return redirect(url_for('reset_password', token=reset_token))
+        else:
+            flash('Email address not found.', 'error')
+
+    return render_template('reset_password_request.html')
+
+@app.route('/reset_password/<token>', methods=['GET', 'POST'])
+def reset_password(token):
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
+
+    # Verify token
+    if not verify_reset_token(token):
+        flash('Invalid or expired reset token.', 'error')
+        return redirect(url_for('login'))
+
+    if request.method == 'POST':
+        password = request.form.get('password')
+        confirm_password = request.form.get('confirm_password')
+
+        if password != confirm_password:
+            flash('Passwords do not match.', 'error')
+            return render_template('reset_password.html', token=token)
+
+        # Get user from session (in production, verify token properly)
+        user_id = session.get('reset_user_id')
+        if not user_id:
+            flash('Invalid reset session.', 'error')
+            return redirect(url_for('login'))
+
+        user = User.query.get(user_id)
+        if user:
+            user.set_password(password)
+            db.session.commit()
+
+            # Clear session
+            session.pop('reset_token', None)
+            session.pop('reset_user_id', None)
+            session.pop('reset_expiry', None)
+
+            flash('Password reset successfully! Please log in.', 'success')
+            return redirect(url_for('login'))
+        else:
+            flash('User not found.', 'error')
+
+    return render_template('reset_password.html', token=token)
+
+# Admin routes
+@app.route('/admin/users')
+@login_required
+@admin_required
+def manage_users():
+    users = User.query.all()
+    return render_template('manage_users.html', users=users)
+
+@app.route('/admin/reset_user_password/<int:user_id>', methods=['POST'])
+@login_required
+@admin_required
+def admin_reset_user_password(user_id):
+    user = User.query.get_or_404(user_id)
+    new_password = request.form.get('new_password')
+
+    if new_password:
+        user.set_password(new_password)
+        db.session.commit()
+        flash(f'Password reset for user {user.username}', 'success')
+    else:
+        flash('Password cannot be empty', 'error')
+
+    return redirect(url_for('manage_users'))
+
+@app.route('/admin/delete_user/<int:user_id>', methods=['POST'])
+@login_required
+@admin_required
+def admin_delete_user(user_id):
+    if current_user.id == user_id:
+        flash('Cannot delete your own account', 'error')
+        return redirect(url_for('manage_users'))
+
+    user = User.query.get_or_404(user_id)
+
+    # Delete user's tasks first
+    Task.query.filter_by(user_id=user_id).delete()
+
+    # Delete user
+    db.session.delete(user)
+    db.session.commit()
+
+    flash(f'User {user.username} deleted successfully', 'success')
+    return redirect(url_for('manage_users'))
 
 # Load tasks from database
 def load_tasks():

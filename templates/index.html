@@ -1861,6 +1861,12 @@
                     <i class="fas fa-chart-bar"></i>
                     <span class="d-none d-lg-inline ms-1">Analytics</span>
                 </a>
+                {% if current_user.is_admin %}
+                <a href="{{ url_for('manage_users') }}" class="btn btn-outline-warning btn-sm">
+                    <i class="fas fa-user-cog"></i>
+                    <span class="d-none d-lg-inline ms-1">Manage Users</span>
+                </a>
+                {% endif %}
             </div>
 
             <!-- Quick Add Input -->
