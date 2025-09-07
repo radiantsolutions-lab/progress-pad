@@ -255,6 +255,34 @@
             background-color: rgba(245, 158, 11, 0.1) !important;
         }
 
+        /* Navigation buttons styling */
+        .modern-nav .btn {
+            background: none;
+            border: 1px solid transparent;
+            color: var(--text-secondary);
+            font-weight: 500;
+            font-size: 0.875rem;
+            font-family: 'SF Pro Text', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            padding: 0.5rem 0.875rem;
+            border-radius: var(--radius-md);
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            min-height: 36px;
+            margin: 0;
+        }
+
+        .modern-nav .btn:hover {
+            color: var(--primary);
+            background-color: rgba(0, 122, 255, 0.06);
+            border-color: rgba(0, 122, 255, 0.12);
+        }
+
+        .modern-nav .btn:focus {
+            box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
+        }
+
         /* Responsive navbar adjustments */
         @media (max-width: 1200px) {
             .navbar .d-flex.align-items-center.gap-2.me-3 {
@@ -489,18 +517,18 @@
         }
 
       .table thead th {
-            background: linear-gradient(135deg, var(--bg-tertiary), var(--gray-200));
-            border-bottom: 2px solid var(--border-primary);
-            font-weight: 700;
-            color: var(--text-primary);
-            padding: 1.25rem 1rem;
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border-primary);
+            font-weight: 500;
+            color: var(--text-secondary);
+            padding: 1rem;
             text-align: left;
         position: sticky;
         top: 0;
             z-index: 10;
             font-size: 0.875rem;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
+            text-transform: none;
+            letter-spacing: 0.025em;
         }
 
         .table tbody tr {
@@ -1668,14 +1696,14 @@
                         <span>Add Task</span>
                     </a>
 
-                    <button class="nav-link" id="quickAddBtn" title="Quick Add Task">
+                    <button type="button" class="btn btn-secondary btn-sm" id="quickAddBtn" title="Quick Add Task">
                         <i class="fas fa-bolt"></i>
                         <span>Quick Add</span>
                     </button>
 
                     <div class="nav-divider"></div>
 
-                    <button class="nav-link" id="filterToggleBtn" title="Toggle Filters">
+                    <button type="button" class="btn btn-secondary btn-sm" id="filterToggleBtn" title="Toggle Filters">
                         <i class="fas fa-filter"></i>
                         <span>Filters</span>
                     </button>
@@ -2866,10 +2894,6 @@
             // Initial update
             setTimeout(updateTaskCountBadge, 100);
 
-            // Show keyboard shortcuts hint
-            setTimeout(() => {
-                showNotification('💡 Pro tip: Use Ctrl+N for new task, Ctrl+K to toggle views, Esc to close modals', 'info', 6000);
-            }, 2000);
         }
 
         // Filter functionality
