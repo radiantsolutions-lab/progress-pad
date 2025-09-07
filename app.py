@@ -348,7 +348,7 @@ def update_action_plan():
     row_id = str(data['id']).strip()
     new_plan = data['new_action_plan'].strip()
 
-    task = Task.query.filter_by(id=row_id).first()
+    task = Task.query.filter_by(id=row_id, user_id=current_user.id).first()
     if task:
         task.current_action_plan = new_plan
         history = task.action_plan_history or ''
@@ -367,7 +367,7 @@ def standup_update_action_plan():
     row_id = str(data['id']).strip()
     new_plan = data['new_action_plan'].strip()
 
-    task = Task.query.filter_by(id=row_id).first()
+    task = Task.query.filter_by(id=row_id, user_id=current_user.id).first()
     if task:
         # Get current action plan to move to history
         current_plan = task.current_action_plan or ''
@@ -392,7 +392,8 @@ def standup_update_action_plan():
 # Delete task by ID (mark as Deleted)
 @app.route('/get_task/<task_id>')
 def get_task(task_id):
-    task = Task.query.filter_by(id=task_id, status='Deleted').first()
+    # Only allow users to access their own tasks
+    task = Task.query.filter_by(id=task_id, user_id=current_user.id).first()
     if task:
         return jsonify(task.to_dict())
 
@@ -403,7 +404,7 @@ def delete_task():
     data = request.json
     task_id = str(data['id']).strip()
 
-    task = Task.query.filter_by(id=task_id).first()
+    task = Task.query.filter_by(id=task_id, user_id=current_user.id).first()
     if task:
         task.status = "Deleted"
         db.session.commit()
@@ -604,7 +605,7 @@ def edit_task():
     data = request.json
     task_id = str(data.get('ID', '')).strip()
 
-    task = Task.query.filter_by(id=task_id).first()
+    task = Task.query.filter_by(id=task_id, user_id=current_user.id).first()
     if not task:
         return jsonify({'status': 'error', 'message': 'Task not found'}), 404
 
