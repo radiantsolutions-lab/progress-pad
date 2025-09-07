@@ -1644,6 +1644,304 @@
             border: 1px solid var(--border-secondary);
         }
 
+        /* x.ai Modern Task Details Styles */
+        .modern-task-details {
+            padding: 0;
+        }
+
+        .task-header-section {
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border-primary);
+            padding: 2rem;
+            position: relative;
+        }
+
+        .task-header-content {
+            display: flex;
+            align-items: flex-start;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .task-type-icon {
+            flex-shrink: 0;
+        }
+
+        .icon-circle {
+            width: 4rem;
+            height: 4rem;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.25rem;
+            box-shadow: var(--shadow);
+        }
+
+        .task-main-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .task-title {
+            font-family: 'SF Pro Display', -apple-system, sans-serif;
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin: 0 0 1rem 0;
+            line-height: 1.2;
+            letter-spacing: -0.025em;
+        }
+
+        .task-meta {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .task-id-chip {
+            background: var(--primary);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            font-family: 'SF Pro Text', -apple-system, sans-serif;
+            letter-spacing: 0.025em;
+        }
+
+        .task-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .badge-modern {
+            padding: 0.25rem 0.75rem;
+            border-radius: 0.75rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+            font-family: 'SF Pro Text', -apple-system, sans-serif;
+        }
+
+        .badge-modern.type {
+            background: rgba(0, 122, 255, 0.1);
+            color: var(--primary);
+        }
+
+        .badge-modern.product {
+            background: rgba(52, 199, 89, 0.1);
+            color: #34C759;
+        }
+
+        .badge-modern.module {
+            background: rgba(255, 149, 0, 0.1);
+            color: #FF9500;
+        }
+
+        .task-status-section {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .status-indicator, .priority-indicator {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .status-dot, .priority-dot {
+            width: 0.75rem;
+            height: 0.75rem;
+            border-radius: 50%;
+        }
+
+        .status-dot.status-not-started { background: var(--gray-400); }
+        .status-dot.status-in-progress { background: var(--primary); }
+        .status-dot.status-completed { background: #34C759; }
+        .status-dot.status-on-hold { background: #FF9500; }
+        .status-dot.status-cancelled { background: var(--danger); }
+
+        .priority-dot.priority-low { background: #34C759; }
+        .priority-dot.priority-medium { background: #FF9500; }
+        .priority-dot.priority-high { background: var(--danger); }
+
+        .status-text, .priority-text {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            font-family: 'SF Pro Text', -apple-system, sans-serif;
+        }
+
+        .timeline-section {
+            background: var(--bg-secondary);
+            padding: 2rem;
+            border-bottom: 1px solid var(--border-primary);
+        }
+
+        .timeline-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .timeline-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: var(--bg-card);
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-primary);
+        }
+
+        .timeline-icon {
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 50%;
+            background: rgba(0, 122, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            flex-shrink: 0;
+        }
+
+        .timeline-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .timeline-label {
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.25rem;
+        }
+
+        .timeline-value {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .action-plan-section {
+            padding: 2rem;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            font-family: 'SF Pro Display', -apple-system, sans-serif;
+        }
+
+        .section-title i {
+            color: var(--primary);
+        }
+
+        .standup-btn {
+            background: var(--primary);
+            color: white;
+            border: 1px solid var(--primary);
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius-md);
+            font-size: 0.875rem;
+            font-weight: 500;
+            font-family: 'SF Pro Text', -apple-system, sans-serif;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .standup-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .current-plan, .plan-history {
+            margin-bottom: 2rem;
+        }
+
+        .plan-header {
+            margin-bottom: 1rem;
+        }
+
+        .plan-status {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            font-family: 'SF Pro Text', -apple-system, sans-serif;
+        }
+
+        .plan-status.active {
+            color: #34C759;
+        }
+
+        .plan-status.active .status-indicator {
+            width: 0.5rem;
+            height: 0.5rem;
+            border-radius: 50%;
+            background: #34C759;
+        }
+
+        .plan-status.history {
+            color: var(--text-muted);
+        }
+
+        .plan-content {
+            background: var(--bg-card);
+            border: 1px solid var(--border-primary);
+            border-radius: var(--radius-md);
+            padding: 1.5rem;
+            font-family: 'SF Pro Text', -apple-system, sans-serif;
+            line-height: 1.6;
+            color: var(--text-primary);
+        }
+
+        .plan-content.history {
+            background: var(--bg-secondary);
+            border: 1px solid rgba(142, 142, 147, 0.2);
+        }
+
+        .plan-content.history pre {
+            margin: 0;
+            font-family: 'SF Pro Text', -apple-system, sans-serif;
+            font-size: 0.875rem;
+            white-space: pre-wrap;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        .no-plan {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: var(--text-muted);
+            font-style: italic;
+            font-family: 'SF Pro Text', -apple-system, sans-serif;
+        }
+
         /* Utility Classes */
         .text-gradient {
             background: linear-gradient(135deg, var(--primary), var(--primary-dark));
@@ -1654,7 +1952,7 @@
 
         .shadow-soft {
             box-shadow: 0 2px 15px rgba(0, 0, 0, 0.08);
-      }
+        }
     </style>
 </head>
 <body>
@@ -3214,80 +3512,138 @@
                 .then(task => {
                     const content = document.getElementById('taskDetailsContent');
                     content.innerHTML = `
-                        <!-- Task Information Card - Comprehensive -->
-                        <div class="p-4 pb-0">
-                            <div class="card border-0 shadow-sm" style="background: linear-gradient(135deg, var(--bg-tertiary), var(--bg-secondary)); border-left: 4px solid var(--primary);">
-                                <div class="card-body px-4 pt-4 pb-0">
-                                    <!-- Header Row -->
-                                    <div class="row g-3 align-items-start">
-                                        <div class="col-auto">
-                                            <div class="avatar-circle bg-primary d-flex align-items-center justify-content-center" style="width: 50px; height: 50px; border-radius: 50%; font-size: 1.25rem; font-weight: 600; color: white;">
-                                                ${task.Type.charAt(0).toUpperCase()}
-                                            </div>
+                        <!-- x.ai Modern Task Details -->
+                        <div class="modern-task-details">
+                            <!-- Header Section -->
+                            <div class="task-header-section">
+                                <div class="task-header-content">
+                                    <!-- Task Type Icon -->
+                                    <div class="task-type-icon">
+                                        <div class="icon-circle">
+                                            <i class="fas ${getTaskTypeIcon(task.Type)}"></i>
                                         </div>
-                                        <div class="col">
-                                            <h4 class="card-title mb-2" style="color: var(--text-primary); font-weight: 600;">${task.Description}</h4>
-                                            <div class="d-flex flex-wrap gap-2 align-items-center mb-2">
-                                                <span class="badge bg-primary">${task.ID}</span>
-                                                <span class="badge bg-light text-dark">${task.Type}</span>
-                                                ${task.Product ? `<span class="badge bg-info">${task.Product}</span>` : ''}
-                                                ${task.Module ? `<span class="badge bg-success">${task.Module}</span>` : ''}
-                                                <span class="task-status status-${task.Status.toLowerCase().replace(' ', '-')}">${task.Status}</span>
-                                                <span class="task-priority priority-${task.Priority.toLowerCase()}">${task.Priority}</span>
-                                            </div>
-                                            <!-- Timeline Info -->
-                                            <div class="d-flex flex-wrap gap-3 align-items-center text-muted small">
-                                                ${task['Created Date'] ? `<div class="d-flex align-items-center gap-1">
-                                                    <i class="fas fa-calendar-plus"></i>
-                                                    <span>Created: ${task['Created Date']}</span>
-                                                </div>` : ''}
-                                                ${task['Due Date'] ? `<div class="d-flex align-items-center gap-1 fw-semibold">
-                                                    <i class="fas fa-calendar-check"></i>
-                                                    <span>Due: ${task['Due Date']}</span>
-                                                </div>` : ''}
-                                                ${task['Status Update Date'] ? `<div class="d-flex align-items-center gap-1">
-                                                    <i class="fas fa-clock"></i>
-                                                    <span>Updated: ${task['Status Update Date']}</span>
-                                                </div>` : ''}
+                                    </div>
+
+                                    <!-- Main Info -->
+                                    <div class="task-main-info">
+                                        <h1 class="task-title">${task.Description}</h1>
+                                        <div class="task-meta">
+                                            <div class="task-id-chip">${task.ID}</div>
+                                            <div class="task-badges">
+                                                <span class="badge-modern type">${task.Type}</span>
+                                                ${task.Product ? `<span class="badge-modern product">${task.Product}</span>` : ''}
+                                                ${task.Module ? `<span class="badge-modern module">${task.Module}</span>` : ''}
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
 
-                        <!-- Action Plan - Full Width -->
-                        <div class="card mx-4 mb-4">
-                            <div class="card-header bg-light d-flex justify-content-between align-items-center">
-                                <h6 class="mb-0">
-                                    <i class="fas fa-tasks me-2 text-success"></i>Action Plan & Details
-                                </h6>
-                                <button type="button" class="btn btn-outline-primary btn-sm" onclick="standupUpdateActionPlan('${task.ID}')" title="Standup Update: Move current plan to history and add new plan">
-                                    <i class="fas fa-sync-alt me-1"></i>Standup Update
-                                </button>
+                                <!-- Status & Priority -->
+                                <div class="task-status-section">
+                                    <div class="status-indicator">
+                                        <div class="status-dot status-${task.Status.toLowerCase().replace(' ', '-')}"></div>
+                                        <span class="status-text">${task.Status}</span>
+                                    </div>
+                                    <div class="priority-indicator">
+                                        <div class="priority-dot priority-${task.Priority.toLowerCase()}"></div>
+                                        <span class="priority-text">${task.Priority}</span>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="card-body">
+
+                            <!-- Timeline Section -->
+                            <div class="timeline-section">
+                                <div class="timeline-grid">
+                                    ${task['Created Date'] ? `
+                                    <div class="timeline-item">
+                                        <div class="timeline-icon">
+                                            <i class="fas fa-calendar-plus"></i>
+                                        </div>
+                                        <div class="timeline-content">
+                                            <div class="timeline-label">Created</div>
+                                            <div class="timeline-value">${task['Created Date']}</div>
+                                        </div>
+                                    </div>` : ''}
+
+                                    ${task['Due Date'] ? `
+                                    <div class="timeline-item">
+                                        <div class="timeline-icon">
+                                            <i class="fas fa-calendar-check"></i>
+                                        </div>
+                                        <div class="timeline-content">
+                                            <div class="timeline-label">Due Date</div>
+                                            <div class="timeline-value">${task['Due Date']}</div>
+                                        </div>
+                                    </div>` : ''}
+
+                                    ${task['Status Update Date'] ? `
+                                    <div class="timeline-item">
+                                        <div class="timeline-icon">
+                                            <i class="fas fa-clock"></i>
+                                        </div>
+                                        <div class="timeline-content">
+                                            <div class="timeline-label">Last Updated</div>
+                                            <div class="timeline-value">${task['Status Update Date']}</div>
+                                        </div>
+                                    </div>` : ''}
+                                </div>
+                            </div>
+
+                            <!-- Action Plan Section -->
+                            <div class="action-plan-section">
+                                <div class="section-header">
+                                    <div class="section-title">
+                                        <i class="fas fa-tasks"></i>
+                                        Action Plan
+                                    </div>
+                                    <button type="button" class="standup-btn" onclick="standupUpdateActionPlan('${task.ID}')" title="Standup Update: Move current plan to history and add new plan">
+                                        <i class="fas fa-sync-alt"></i>
+                                        Standup Update
+                                    </button>
+                                </div>
+
                                 ${task['Current Action Plan'] ? `
-                                <div class="mb-4">
-                                    <h6 class="text-success mb-3" style="font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.5px;">Current Action Plan</h6>
-                                    <div class="bg-light p-4 rounded border-start border-success border-4" style="line-height: 1.6;">
+                                <div class="current-plan">
+                                    <div class="plan-header">
+                                        <div class="plan-status active">
+                                            <div class="status-indicator"></div>
+                                            <span>Current Plan</span>
+                                        </div>
+                                    </div>
+                                    <div class="plan-content">
                                         ${task['Current Action Plan']}
                                     </div>
-                                </div>` : '<div class="text-muted mb-4">No current action plan available</div>'}
+                                </div>` : '<div class="no-plan">No current action plan available</div>'}
 
                                 ${task['Action Plan History'] ? `
-                                <div class="mb-4">
-                                    <h6 class="text-info mb-3" style="font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.5px;">Action Plan History</h6>
-                                    <div class="bg-light p-4 rounded" style="white-space: pre-wrap; font-family: 'Courier New', monospace; font-size: 0.875rem; max-height: 300px; overflow-y: auto; border-left: 3px solid var(--info); line-height: 1.5;">
-                                        ${task['Action Plan History']}
+                                <div class="plan-history">
+                                    <div class="plan-header">
+                                        <div class="plan-status history">
+                                            <i class="fas fa-history"></i>
+                                            <span>Plan History</span>
+                                        </div>
+                                    </div>
+                                    <div class="plan-content history">
+                                        <pre>${task['Action Plan History']}</pre>
                                     </div>
                                 </div>` : ''}
-
                             </div>
                         </div>
-
-
                     `;
+
+                    // Helper function for task type icons
+                    function getTaskTypeIcon(type) {
+                        const icons = {
+                            'Bug': 'fa-bug',
+                            'Feature': 'fa-lightbulb',
+                            'Task': 'fa-check-square',
+                            'Enhancement': 'fa-arrow-up',
+                            'Documentation': 'fa-book',
+                            'Research': 'fa-search',
+                            'Maintenance': 'fa-tools'
+                        };
+                        return icons[type] || 'fa-tasks';
+                    }
 
                     // Show modal
                     const modal = new bootstrap.Modal(document.getElementById('viewTaskModal'));
@@ -3509,8 +3865,12 @@
             console.log('Quick Add initialized successfully');
 
             // Toggle Quick Add
-            quickAddBtn.addEventListener('click', function() {
+            quickAddBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
                 console.log('Quick Add button clicked');
+                console.log('Button element:', quickAddBtn);
+                console.log('Container element:', quickAddContainer);
                 const isVisible = quickAddContainer.style.display !== 'none';
                 console.log('Quick Add container visible:', isVisible);
                 if (isVisible) {
