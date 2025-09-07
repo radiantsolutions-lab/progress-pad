@@ -255,8 +255,8 @@
             background-color: rgba(245, 158, 11, 0.1) !important;
         }
 
-        /* Navigation buttons styling */
-        .modern-nav .btn {
+        /* Navigation buttons styling - exclude functional buttons */
+        .modern-nav .btn:not(#quickAddBtn):not(#filterToggleBtn) {
             background: none;
             border: 1px solid transparent;
             color: var(--text-secondary);
@@ -273,14 +273,27 @@
             margin: 0;
         }
 
-        .modern-nav .btn:hover {
+        .modern-nav .btn:not(#quickAddBtn):not(#filterToggleBtn):hover {
             color: var(--primary);
             background-color: rgba(0, 122, 255, 0.06);
             border-color: rgba(0, 122, 255, 0.12);
         }
 
-        .modern-nav .btn:focus {
+        .modern-nav .btn:not(#quickAddBtn):not(#filterToggleBtn):focus {
             box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
+        }
+
+        /* Specific styling for functional buttons */
+        .modern-nav #quickAddBtn, .modern-nav #filterToggleBtn {
+            background: var(--bg-card);
+            border: 1px solid var(--border-primary);
+            color: var(--text-primary);
+        }
+
+        .modern-nav #quickAddBtn:hover, .modern-nav #filterToggleBtn:hover {
+            background: var(--bg-secondary);
+            border-color: var(--primary);
+            color: var(--primary);
         }
 
         /* Responsive navbar adjustments */
@@ -3829,135 +3842,145 @@
         // Quick Add functionality
         function initializeQuickAdd() {
             console.log('Initializing Quick Add...');
-            const quickAddBtn = document.getElementById('quickAddBtn');
-            const quickAddContainer = document.getElementById('quickAddContainer');
-            const quickAddInput = document.getElementById('quickAddInput');
-            const quickAddSubmit = document.getElementById('quickAddSubmit');
-            const quickAddCancel = document.getElementById('quickAddCancel');
 
-            console.log('Quick Add elements:', {
-                quickAddBtn: !!quickAddBtn,
-                quickAddContainer: !!quickAddContainer,
-                quickAddInput: !!quickAddInput,
-                quickAddSubmit: !!quickAddSubmit,
-                quickAddCancel: !!quickAddCancel
-            });
+            // Add a small delay to ensure DOM is ready
+            setTimeout(() => {
+                const quickAddBtn = document.getElementById('quickAddBtn');
+                const quickAddContainer = document.getElementById('quickAddContainer');
+                const quickAddInput = document.getElementById('quickAddInput');
+                const quickAddSubmit = document.getElementById('quickAddSubmit');
+                const quickAddCancel = document.getElementById('quickAddCancel');
 
-            if (!quickAddBtn || !quickAddContainer || !quickAddInput) {
-                console.warn('Quick Add initialization failed - missing elements');
-                return;
-            }
+                console.log('Quick Add elements after delay:', {
+                    quickAddBtn: !!quickAddBtn,
+                    quickAddContainer: !!quickAddContainer,
+                    quickAddInput: !!quickAddInput,
+                    quickAddSubmit: !!quickAddSubmit,
+                    quickAddCancel: !!quickAddCancel
+                });
 
-            console.log('Quick Add initialized successfully');
-
-            // Toggle Quick Add
-            quickAddBtn.addEventListener('click', function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                console.log('Quick Add button clicked');
-                console.log('Button element:', quickAddBtn);
-                console.log('Container element:', quickAddContainer);
-                const isVisible = quickAddContainer.style.display !== 'none';
-                console.log('Quick Add container visible:', isVisible);
-                if (isVisible) {
-                    hideQuickAdd();
-                } else {
-                    showQuickAdd();
+                if (quickAddBtn) {
+                    console.log('Quick Add button found:', quickAddBtn);
+                    console.log('Button classes:', quickAddBtn.className);
+                    console.log('Button style:', quickAddBtn.style.cssText);
                 }
-            });
 
-            // Submit Quick Add
-            function submitQuickAdd() {
-                const description = quickAddInput.value.trim();
-                if (!description) {
-                    showNotification('Please enter a task description.', 'warning');
-                    quickAddInput.focus();
+                if (!quickAddBtn || !quickAddContainer || !quickAddInput) {
+                    console.warn('Quick Add initialization failed - missing elements');
                     return;
                 }
 
-                // Create task data for quick add
-                const taskData = {
-                    Type: 'Task', // Default type
-                    Category: 'General', // Default category
-                    Description: description,
-                    Status: 'Not Started',
-                    Priority: 'Medium', // Default priority
-                    'Current Action Plan': description
-                };
+                console.log('Quick Add initialized successfully');
 
-                // Submit the task
-                submitQuickTask(taskData);
-            }
-
-            // Submit Quick Task
-            function submitQuickTask(taskData) {
-                // Show loading state
-                quickAddSubmit.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
-                quickAddSubmit.disabled = true;
-                quickAddInput.disabled = true;
-
-                fetch('/add_task', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(taskData)
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.status === 'success') {
-                        showNotification('Task added successfully!', 'success');
+                // Toggle Quick Add
+                quickAddBtn.addEventListener('click', function(e) {
+                    console.log('Quick Add button clicked');
+                    console.log('Button element:', quickAddBtn);
+                    console.log('Container element:', quickAddContainer);
+                    const isVisible = quickAddContainer.style.display !== 'none';
+                    console.log('Quick Add container visible:', isVisible);
+                    if (isVisible) {
                         hideQuickAdd();
-                        setTimeout(() => location.reload(), 1000);
                     } else {
-                        showNotification('Failed to add task: ' + (data.message || 'Unknown error'), 'error');
+                        showQuickAdd();
                     }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    showNotification('Failed to add task', 'error');
-                })
-                .finally(() => {
-                    // Reset button state
-                    quickAddSubmit.innerHTML = '<i class="fas fa-plus"></i>';
-                    quickAddSubmit.disabled = false;
-                    quickAddInput.disabled = false;
                 });
-            }
 
-            // Show Quick Add
-            function showQuickAdd() {
-                quickAddContainer.style.display = 'block';
-                quickAddInput.focus();
-                quickAddInput.value = '';
-            }
+                // Define functions that need the DOM elements
+                function submitQuickAdd() {
+                    const description = quickAddInput.value.trim();
+                    if (!description) {
+                        showNotification('Please enter a task description.', 'warning');
+                        quickAddInput.focus();
+                        return;
+                    }
 
-            // Hide Quick Add
-            function hideQuickAdd() {
-                quickAddContainer.style.display = 'none';
-                quickAddInput.value = '';
-            }
+                    // Create task data for quick add
+                    const taskData = {
+                        Type: 'Task', // Default type
+                        Category: 'General', // Default category
+                        Description: description,
+                        Status: 'Not Started',
+                        Priority: 'Medium', // Default priority
+                        'Created Date': new Date().toISOString().split('T')[0],
+                        'Due Date': '',
+                        'Status Update Date': new Date().toISOString().split('T')[0],
+                        'Current Action Plan': description,
+                        'Action Plan History': ''
+                    };
 
-            // Event listeners
-            quickAddSubmit.addEventListener('click', submitQuickAdd);
+                    console.log('Submitting Quick Add task:', taskData);
 
-            quickAddCancel.addEventListener('click', hideQuickAdd);
+                    // Show loading state
+                    quickAddSubmit.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+                    quickAddSubmit.disabled = true;
+                    quickAddInput.disabled = true;
 
-            quickAddInput.addEventListener('keydown', function(e) {
-                if (e.key === 'Enter') {
-                    e.preventDefault();
-                    submitQuickAdd();
-                } else if (e.key === 'Escape') {
-                    e.preventDefault();
-                    hideQuickAdd();
+                    fetch('/add_task', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(taskData)
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log('Quick Add response:', data);
+                        if (data.status === 'success') {
+                            showNotification('Task added successfully!', 'success');
+                            hideQuickAdd();
+                            setTimeout(() => location.reload(), 1000);
+                        } else {
+                            showNotification('Failed to add task: ' + (data.message || 'Unknown error'), 'error');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Quick Add error:', error);
+                        showNotification('Failed to add task. Please try again.', 'error');
+                    })
+                    .finally(() => {
+                        // Reset button state
+                        quickAddSubmit.innerHTML = '<i class="fas fa-plus"></i>';
+                        quickAddSubmit.disabled = false;
+                        quickAddInput.disabled = false;
+                    });
                 }
-            });
 
-            // Click outside to hide
-            document.addEventListener('click', function(e) {
-                if (!quickAddContainer.contains(e.target) && e.target !== quickAddBtn) {
-                    hideQuickAdd();
+                function showQuickAdd() {
+                    quickAddContainer.style.display = 'block';
+                    quickAddInput.focus();
+                    quickAddInput.value = '';
                 }
-            });
+
+                function hideQuickAdd() {
+                    quickAddContainer.style.display = 'none';
+                    quickAddInput.value = '';
+                }
+
+                // Attach event listeners
+                quickAddSubmit.addEventListener('click', submitQuickAdd);
+                quickAddCancel.addEventListener('click', hideQuickAdd);
+
+                quickAddInput.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        submitQuickAdd();
+                    } else if (e.key === 'Escape') {
+                        e.preventDefault();
+                        hideQuickAdd();
+                    }
+                });
+
+                // Click outside to hide
+                document.addEventListener('click', function(e) {
+                    if (!quickAddContainer.contains(e.target) && e.target !== quickAddBtn) {
+                        hideQuickAdd();
+                    }
+                });
+
+            }, 100); // 100ms delay to ensure DOM is ready
         }
+
+
+
 
         // Saved Filters functionality
         function initializeSavedFilters() {
@@ -4100,79 +4123,85 @@
         // Filter Drawer functionality
         function initializeFilterDrawer() {
             console.log('Initializing Filter Drawer...');
-            const filterToggleBtn = document.getElementById('filterToggleBtn');
-            const closeFilterDrawer = document.getElementById('closeFilterDrawer');
-            const filterDrawer = document.getElementById('filterDrawer');
-            const filterOverlay = document.getElementById('filterOverlay');
 
-            console.log('Filter Drawer elements:', {
-                filterToggleBtn: !!filterToggleBtn,
-                closeFilterDrawer: !!closeFilterDrawer,
-                filterDrawer: !!filterDrawer,
-                filterOverlay: !!filterOverlay
-            });
+            // Add a small delay to ensure DOM is ready
+            setTimeout(() => {
+                const filterToggleBtn = document.getElementById('filterToggleBtn');
+                const closeFilterDrawer = document.getElementById('closeFilterDrawer');
+                const filterDrawer = document.getElementById('filterDrawer');
+                const filterOverlay = document.getElementById('filterOverlay');
 
-            if (!filterToggleBtn || !filterDrawer) {
-                console.warn('Filter Drawer initialization failed - missing elements');
-                return;
-            }
+                console.log('Filter Drawer elements after delay:', {
+                    filterToggleBtn: !!filterToggleBtn,
+                    closeFilterDrawer: !!closeFilterDrawer,
+                    filterDrawer: !!filterDrawer,
+                    filterOverlay: !!filterOverlay
+                });
 
-            console.log('Filter Drawer initialized successfully');
-
-            // Toggle filter drawer
-            filterToggleBtn.addEventListener('click', function() {
-                console.log('Filter toggle button clicked');
-                toggleFilterDrawer();
-            });
-
-            // Close filter drawer
-            closeFilterDrawer.addEventListener('click', function() {
-                closeFilterDrawerFunc();
-            });
-
-            // Close on overlay click
-            filterOverlay.addEventListener('click', function() {
-                closeFilterDrawerFunc();
-            });
-
-            // Close on Escape key
-            document.addEventListener('keydown', function(e) {
-                if (e.key === 'Escape' && filterDrawer.classList.contains('open')) {
-                    closeFilterDrawerFunc();
+                if (!filterToggleBtn || !filterDrawer) {
+                    console.warn('Filter Drawer initialization failed - missing elements');
+                    return;
                 }
-            });
 
-            function toggleFilterDrawer() {
-                const isOpen = filterDrawer.classList.contains('open');
+                console.log('Filter Drawer initialized successfully');
 
-                if (isOpen) {
-                    closeFilterDrawerFunc();
-                } else {
-                    openFilterDrawer();
+                // Toggle filter drawer
+                filterToggleBtn.addEventListener('click', function() {
+                    console.log('Filter toggle button clicked');
+                    toggleFilterDrawer();
+                });
+
+                // Define functions that need the DOM elements
+                function toggleFilterDrawer() {
+                    const isOpen = filterDrawer.classList.contains('open');
+
+                    if (isOpen) {
+                        closeFilterDrawerFunc();
+                    } else {
+                        openFilterDrawer();
+                    }
                 }
-            }
 
-            function openFilterDrawer() {
-                filterDrawer.style.display = 'block';
-                setTimeout(() => {
-                    filterDrawer.classList.add('open');
-                    filterOverlay.style.display = 'block';
+                function openFilterDrawer() {
+                    filterDrawer.style.display = 'block';
                     setTimeout(() => {
-                        filterOverlay.classList.add('active');
+                        filterDrawer.classList.add('open');
+                        filterOverlay.style.display = 'block';
+                        setTimeout(() => {
+                            filterOverlay.classList.add('active');
+                        }, 10);
                     }, 10);
-                }, 10);
-                document.body.style.overflow = 'hidden';
-            }
+                    document.body.style.overflow = 'hidden';
+                }
 
-            function closeFilterDrawerFunc() {
-                filterDrawer.classList.remove('open');
-                filterOverlay.classList.remove('active');
-                setTimeout(() => {
-                    filterOverlay.style.display = 'none';
-                    filterDrawer.style.display = 'none';
-                }, 300);
-                document.body.style.overflow = '';
-            }
+                function closeFilterDrawerFunc() {
+                    filterDrawer.classList.remove('open');
+                    filterOverlay.classList.remove('active');
+                    setTimeout(() => {
+                        filterOverlay.style.display = 'none';
+                        filterDrawer.style.display = 'none';
+                    }, 300);
+                    document.body.style.overflow = '';
+                }
+
+                // Close filter drawer
+                closeFilterDrawer.addEventListener('click', function() {
+                    closeFilterDrawerFunc();
+                });
+
+                // Close on overlay click
+                filterOverlay.addEventListener('click', function() {
+                    closeFilterDrawerFunc();
+                });
+
+                // Close on Escape key
+                document.addEventListener('keydown', function(e) {
+                    if (e.key === 'Escape' && filterDrawer.classList.contains('open')) {
+                        closeFilterDrawerFunc();
+                    }
+                });
+
+            }, 100); // 100ms delay to ensure DOM is ready
         }
 
         // Standup Action Plan Update Function
