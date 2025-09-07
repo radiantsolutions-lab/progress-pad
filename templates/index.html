@@ -1658,9 +1658,9 @@
 
         .task-header-content {
             display: flex;
-            align-items: flex-start;
-            gap: 1.25rem;
-            margin-bottom: 1.5rem;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 0;
         }
 
         .task-type-icon {
@@ -1685,34 +1685,98 @@
             min-width: 0;
         }
 
-        .task-timeline-compact {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1.5rem;
-            margin-top: 1rem;
-            padding-top: 1rem;
-            border-top: 1px solid var(--border-primary);
-        }
-
-        .timeline-compact-item {
+        .task-info-row {
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .task-details-compact {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+            margin-left: auto;
+        }
+
+        .task-id-compact {
+            background: var(--primary);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.5rem;
+            font-size: 0.7rem;
+            font-weight: 600;
+            font-family: 'SF Pro Text', -apple-system, sans-serif;
+            letter-spacing: 0.025em;
+        }
+
+        .status-priority-inline {
+            display: flex;
+            align-items: center;
+            gap: 0.375rem;
+            padding: 0.25rem 0.5rem;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 0.5rem;
+            border: 1px solid var(--border-primary);
+        }
+
+        .status-dot, .priority-dot {
+            width: 0.5rem;
+            height: 0.5rem;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .status-text-compact, .priority-text-compact {
+            font-size: 0.75rem;
+            font-weight: 500;
+            font-family: 'SF Pro Text', -apple-system, sans-serif;
+        }
+
+        .priority-separator {
+            color: var(--text-muted);
             font-size: 0.875rem;
+            margin: 0 0.125rem;
+        }
+
+        .timeline-inline {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-left: 1rem;
+            padding-left: 1rem;
+            border-left: 1px solid var(--border-primary);
+        }
+
+        .timeline-item-inline {
+            display: flex;
+            align-items: center;
+            gap: 0.375rem;
+            font-size: 0.75rem;
             color: var(--text-secondary);
             font-family: 'SF Pro Text', -apple-system, sans-serif;
             font-weight: 400;
         }
 
-        .timeline-compact-item i {
-            width: 1rem;
-            height: 1rem;
+        .timeline-item-inline i {
+            width: 0.875rem;
+            height: 0.875rem;
             display: flex;
             align-items: center;
             justify-content: center;
             color: var(--primary);
             opacity: 0.7;
         }
+
+        .timeline-item-inline.due-date {
+            color: var(--warning);
+        }
+
+        .timeline-item-inline.due-date i {
+            color: var(--warning);
+        }
+
 
         .task-title {
             font-family: 'SF Pro Display', -apple-system, sans-serif;
@@ -1771,24 +1835,7 @@
             color: #FF9500;
         }
 
-        .task-status-section {
-            display: flex;
-            gap: 2rem;
-            align-items: center;
-        }
-
-        .status-indicator, .priority-indicator {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .status-dot, .priority-dot {
-            width: 0.75rem;
-            height: 0.75rem;
-            border-radius: 50%;
-        }
-
+        /* Status dots for compact layout */
         .status-dot.status-not-started { background: var(--gray-400); }
         .status-dot.status-in-progress { background: var(--primary); }
         .status-dot.status-completed { background: #34C759; }
@@ -1798,13 +1845,6 @@
         .priority-dot.priority-low { background: #34C759; }
         .priority-dot.priority-medium { background: #FF9500; }
         .priority-dot.priority-high { background: var(--danger); }
-
-        .status-text, .priority-text {
-            font-size: 0.875rem;
-            font-weight: 500;
-            color: var(--text-secondary);
-            font-family: 'SF Pro Text', -apple-system, sans-serif;
-        }
 
 
         .action-plan-section {
@@ -3500,44 +3540,36 @@
                                         </div>
                                     </div>
 
-                                    <!-- Main Info -->
+                                    <!-- Main Info - All on one line -->
                                     <div class="task-main-info">
-                                        <h1 class="task-title">${task.Description}</h1>
-                                        <div class="task-meta">
-                                            <div class="task-id-chip">${task.ID}</div>
-                                            <div class="task-badges">
+                                        <div class="task-info-row">
+                                            <h1 class="task-title">${task.Description}</h1>
+                                            <div class="task-details-compact">
+                                                <span class="task-id-compact">${task.ID}</span>
                                                 <span class="badge-modern type">${task.Type}</span>
                                                 ${task.Product ? `<span class="badge-modern product">${task.Product}</span>` : ''}
                                                 ${task.Module ? `<span class="badge-modern module">${task.Module}</span>` : ''}
+
+                                                <!-- Status & Priority inline -->
+                                                <div class="status-priority-inline">
+                                                    <div class="status-dot status-${task.Status.toLowerCase().replace(' ', '-')}"></div>
+                                                    <span class="status-text-compact">${task.Status}</span>
+                                                    <span class="priority-separator">•</span>
+                                                    <div class="priority-dot priority-${task.Priority.toLowerCase()}"></div>
+                                                    <span class="priority-text-compact">${task.Priority}</span>
+                                                </div>
+
+                                                <!-- Timeline info inline -->
+                                                <div class="timeline-inline">
+                                                    ${task['Created Date'] ? `<span class="timeline-item-inline">
+                                                        <i class="fas fa-calendar-plus"></i> ${task['Created Date']}
+                                                    </span>` : ''}
+                                                    ${task['Due Date'] ? `<span class="timeline-item-inline due-date">
+                                                        <i class="fas fa-calendar-check"></i> ${task['Due Date']}
+                                                    </span>` : ''}
+                                                </div>
                                             </div>
                                         </div>
-                                        <!-- Timeline Info in Header -->
-                                        <div class="task-timeline-compact">
-                                            ${task['Created Date'] ? `<div class="timeline-compact-item">
-                                                <i class="fas fa-calendar-plus"></i>
-                                                <span>Created ${task['Created Date']}</span>
-                                            </div>` : ''}
-                                            ${task['Due Date'] ? `<div class="timeline-compact-item">
-                                                <i class="fas fa-calendar-check"></i>
-                                                <span>Due ${task['Due Date']}</span>
-                                            </div>` : ''}
-                                            ${task['Status Update Date'] ? `<div class="timeline-compact-item">
-                                                <i class="fas fa-clock"></i>
-                                                <span>Updated ${task['Status Update Date']}</span>
-                                            </div>` : ''}
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Status & Priority -->
-                                <div class="task-status-section">
-                                    <div class="status-indicator">
-                                        <div class="status-dot status-${task.Status.toLowerCase().replace(' ', '-')}"></div>
-                                        <span class="status-text">${task.Status}</span>
-                                    </div>
-                                    <div class="priority-indicator">
-                                        <div class="priority-dot priority-${task.Priority.toLowerCase()}"></div>
-                                        <span class="priority-text">${task.Priority}</span>
                                     </div>
                                 </div>
                             </div>
