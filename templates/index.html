@@ -67,90 +67,12 @@
             --shadow-heavy: rgba(0, 0, 0, 0.06);
         }
 
-        /* Dark Mode Variables */
-        [data-theme="dark"] {
-            --primary: #818cf8;
-            --primary-dark: #6366f1;
-            --primary-light: #a5b4fc;
-            --secondary: #64748b;
-            --success: #34d399;
-            --success-light: #6ee7b7;
-            --warning: #fbbf24;
-            --warning-light: #fcd34d;
-            --danger: #f87171;
-            --danger-light: #fca5a5;
-            --info: #60a5fa;
-            --info-light: #93c5fd;
 
-            /* Dark Mode Background Colors */
-            --bg-primary: #0f172a;
-            --bg-secondary: #1e293b;
-            --bg-tertiary: #334155;
-            --bg-navbar: rgba(15, 23, 42, 0.98);
-            --bg-card: rgba(30, 41, 59, 0.95);
-            --text-primary: #f8fafc;
-            --text-secondary: #cbd5e1;
-            --text-muted: #94a3b8;
-            --border-primary: rgba(148, 163, 184, 0.2);
-            --border-secondary: rgba(30, 41, 59, 0.3);
-            --shadow-light: rgba(0, 0, 0, 0.2);
-            --shadow-medium: rgba(0, 0, 0, 0.3);
-            --shadow-heavy: rgba(0, 0, 0, 0.4);
-
-            /* Neutral Colors for Dark Mode */
-            --gray-50: #0f172a;
-            --gray-100: #1e293b;
-            --gray-200: #334155;
-            --gray-300: #475569;
-            --gray-400: #64748b;
-            --gray-500: #94a3b8;
-            --gray-600: #cbd5e1;
-            --gray-700: #e2e8f0;
-            --gray-800: #f1f5f9;
-            --gray-900: #f8fafc;
-        }
-
-        /* Theme Transition */
+        /* Base Styles */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
-        }
-
-        /* Bootstrap Overrides for Dark Mode */
-        [data-theme="dark"] .bg-light {
-            background-color: var(--bg-tertiary) !important;
-            color: var(--text-primary) !important;
-        }
-
-        [data-theme="dark"] .bg-white {
-            background-color: var(--bg-secondary) !important;
-            color: var(--text-primary) !important;
-        }
-
-        [data-theme="dark"] .text-dark {
-            color: var(--text-primary) !important;
-        }
-
-        [data-theme="dark"] .text-muted {
-            color: var(--text-muted) !important;
-        }
-
-        [data-theme="dark"] .text-secondary {
-            color: var(--text-secondary) !important;
-        }
-
-        [data-theme="dark"] .text-white {
-            color: var(--text-primary) !important;
-        }
-
-        [data-theme="dark"] .border {
-            border-color: var(--border-primary) !important;
-        }
-
-        [data-theme="dark"] .border-light {
-            border-color: var(--border-secondary) !important;
         }
 
       body {
@@ -439,200 +361,6 @@
             font-weight: 400;
         }
 
-        /* Stats Cards */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 3rem;
-            padding: 0 0.5rem;
-        }
-
-        @media (max-width: 768px) {
-            .stats-grid {
-                grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-                gap: 1rem;
-                padding: 0 0.25rem;
-            }
-        }
-
-        /* x.ai Stats Cards - Clean & Professional */
-        .stats-card {
-            background: var(--bg-card);
-            border-radius: var(--radius-lg);
-            padding: 1.25rem;
-            box-shadow: var(--shadow);
-            border: 1px solid var(--border-primary);
-            transition: all 0.2s ease;
-            position: relative;
-            overflow: hidden;
-            text-align: center;
-            min-height: 120px;
-            cursor: pointer;
-        }
-
-        .stats-card:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-md);
-            border-color: rgba(0, 122, 255, 0.2);
-        }
-
-        .stats-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: var(--primary);
-            opacity: 0.8;
-        }
-
-        .stats-card::after {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(45deg,
-                transparent 30%,
-                rgba(255, 255, 255, 0.1) 50%,
-                transparent 70%);
-            transform: rotate(45deg);
-            transition: all 0.6s ease;
-          opacity: 0;
-        }
-
-        .stats-card:hover {
-            transform: translateY(-12px) scale(1.03);
-            box-shadow:
-                0 20px 40px var(--shadow-medium),
-                0 8px 25px var(--shadow-light),
-                inset 0 1px 0 var(--bg-secondary);
-            background: linear-gradient(135deg,
-                var(--bg-secondary) 0%,
-                var(--bg-card) 50%,
-                var(--bg-secondary) 100%);
-            animation: none; /* Stop animation on hover for better UX */
-        }
-
-        .stats-card::after {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(45deg,
-                transparent 30%,
-                var(--bg-secondary) 50%,
-                transparent 70%);
-            transform: rotate(45deg);
-            transition: all 0.6s ease;
-            opacity: 0;
-        }
-
-        .stats-card:hover::after {
-            opacity: 1;
-            animation: shimmer 1.5s ease-in-out;
-        }
-
-        @keyframes shimmer {
-            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
-            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
-        }
-
-        .stats-icon {
-            width: 3rem;
-            height: 3rem;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.25rem;
-            margin-bottom: 1rem;
-            background: linear-gradient(135deg,
-                rgba(99, 102, 241, 0.15) 0%,
-                rgba(79, 70, 229, 0.1) 50%,
-                rgba(99, 102, 241, 0.15) 100%);
-            color: var(--primary);
-            border: 1px solid rgba(99, 102, 241, 0.3);
-            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.15);
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            position: relative;
-        overflow: hidden;
-        }
-
-        .stats-icon::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg,
-                transparent,
-                var(--bg-secondary),
-                transparent);
-            transition: left 0.6s ease;
-        }
-
-        .stats-card:hover .stats-icon::before {
-            left: 100%;
-        }
-
-        .stats-card:hover .stats-icon {
-            transform: scale(1.1) rotate(5deg);
-            box-shadow: 0 8px 20px var(--shadow-heavy);
-        }
-
-        .stats-completed .stats-icon {
-            background: linear-gradient(135deg,
-                var(--success) 0%,
-                var(--success-light) 100%);
-            color: var(--text-primary);
-            box-shadow: 0 4px 12px var(--shadow-medium);
-        }
-
-                .stats-in-progress .stats-icon {
-            background: linear-gradient(135deg,
-                var(--primary) 0%,
-                var(--primary-dark) 100%);
-            color: var(--text-primary);
-            box-shadow: 0 4px 12px var(--shadow-medium);
-        }
-
-        .stats-overdue .stats-icon {
-            background: linear-gradient(135deg,
-                var(--danger) 0%,
-                var(--danger-light) 100%);
-            color: var(--text-primary);
-            box-shadow: 0 4px 12px var(--shadow-medium);
-        }
-
-                .stats-total .stats-icon {
-            background: linear-gradient(135deg,
-                var(--gray-400) 0%,
-                var(--gray-500) 100%);
-            color: var(--text-primary);
-            box-shadow: 0 4px 12px var(--shadow-medium);
-        }
-
-        .stats-number {
-            font-size: 2.5rem;
-            font-weight: 800;
-            margin-bottom: 0.25rem;
-            color: var(--gray-900);
-        }
-
-        .stats-label {
-            font-size: 0.875rem;
-        font-weight: 600;
-            color: var(--gray-600);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
 
         /* Action Bar */
         .action-bar {
@@ -1844,35 +1572,6 @@
             transition: all 0.3s ease;
         }
 
-        .stats-card:hover .stats-label {
-            color: var(--primary);
-            opacity: 1;
-        }
-
-        /* Subtle pulse animation for cards */
-        .stats-card:nth-child(1) { animation-delay: 0s; }
-        .stats-card:nth-child(2) { animation-delay: 0.1s; }
-        .stats-card:nth-child(3) { animation-delay: 0.2s; }
-        .stats-card:nth-child(4) { animation-delay: 0.3s; }
-
-
-
-        @keyframes gentlePulse {
-            0%, 100% {
-                transform: translateY(0) scale(1);
-                box-shadow:
-                    0 4px 20px var(--shadow-medium),
-                    0 2px 10px var(--shadow-light),
-                    inset 0 1px 0 var(--bg-secondary);
-            }
-            50% {
-                transform: translateY(-2px) scale(1.005);
-                box-shadow:
-                    0 8px 25px var(--shadow-heavy),
-                    0 4px 15px var(--shadow-medium),
-                    inset 0 1px 0 var(--bg-secondary);
-            }
-        }
 
         /* Loading States */
         .loading-skeleton {
@@ -2045,10 +1744,6 @@
                 <button id="keyboardHelpBtn" class="btn btn-outline-secondary btn-sm" title="Keyboard Shortcuts">
                     <i class="fas fa-keyboard"></i>
                 </button>
-                <button id="themeToggle" class="btn btn-outline-secondary btn-sm d-flex align-items-center gap-2" title="Toggle Theme">
-                    <i id="themeIcon" class="fas fa-moon"></i>
-                    <span id="themeText" class="d-none d-sm-inline">Dark</span>
-                </button>
             </div>
 
             <!-- User Menu -->
@@ -2176,40 +1871,6 @@
         <div class="dashboard-container">
 
 
-            <!-- Stats Overview -->
-            <section class="stats-grid">
-                <div class="stats-card stats-completed slide-in">
-                    <div class="stats-icon">
-                        <i class="fas fa-check-circle"></i>
-      </div>
-                    <div class="stats-number">{{ summary.completed }}</div>
-                    <div class="stats-label">Completed</div>
-        </div>
-
-                                <div class="stats-card stats-in-progress slide-in">
-                    <div class="stats-icon">
-                        <i class="fas fa-play-circle"></i>
-      </div>
-                    <div class="stats-number">{{ summary.in_progress }}</div>
-                    <div class="stats-label">In Progress</div>
-        </div>
-
-                <div class="stats-card stats-overdue slide-in">
-                    <div class="stats-icon">
-                        <i class="fas fa-exclamation-triangle"></i>
-      </div>
-                    <div class="stats-number">{{ summary.overdue }}</div>
-                    <div class="stats-label">Overdue</div>
-    </div>
-
-                <div class="stats-card stats-total slide-in">
-                    <div class="stats-icon">
-                        <i class="fas fa-list"></i>
-      </div>
-                    <div class="stats-number">{{ summary.total }}</div>
-                    <div class="stats-label">Total Tasks</div>
-    </div>
-            </section>
 
 
 
@@ -3045,36 +2706,6 @@
             setInterval(updateTime, 60000); // Update every minute
         }
 
-        // Theme toggle functionality
-        function initializeTheme() {
-            const themeToggle = document.getElementById('themeToggle');
-            const themeIcon = document.getElementById('themeIcon');
-            const themeText = document.getElementById('themeText');
-
-            // Load saved theme preference
-            const savedTheme = localStorage.getItem('theme') || 'light';
-            setTheme(savedTheme);
-
-            // Theme toggle event listener
-            themeToggle.addEventListener('click', function() {
-                const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
-                const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-                setTheme(newTheme);
-                localStorage.setItem('theme', newTheme);
-            });
-
-            function setTheme(theme) {
-                document.documentElement.setAttribute('data-theme', theme);
-
-                if (theme === 'dark') {
-                    themeIcon.className = 'fas fa-sun';
-                    themeText.textContent = 'Light';
-                } else {
-                    themeIcon.className = 'fas fa-moon';
-                    themeText.textContent = 'Dark';
-                }
-            }
-        }
 
         // View toggle functionality
         function initializeViewToggle() {
