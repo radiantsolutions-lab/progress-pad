@@ -3426,7 +3426,7 @@
                             <div class="card border-0 shadow-sm" style="background: linear-gradient(135deg, var(--bg-tertiary), var(--bg-secondary)); border-left: 4px solid var(--primary);">
                                 <div class="card-body p-4">
                                     <!-- Header Row -->
-                                    <div class="row g-3 align-items-start mb-4">
+                                    <div class="row g-3 align-items-start">
                                         <div class="col-auto">
                                             <div class="avatar-circle bg-primary d-flex align-items-center justify-content-center" style="width: 50px; height: 50px; border-radius: 50%; font-size: 1.25rem; font-weight: 600; color: white;">
                                                 ${task.Type.charAt(0).toUpperCase()}
@@ -3434,7 +3434,7 @@
                                         </div>
                                         <div class="col">
                                             <h4 class="card-title mb-2" style="color: var(--text-primary); font-weight: 600;">${task.Description}</h4>
-                                            <div class="d-flex flex-wrap gap-2 align-items-center mb-3">
+                                            <div class="d-flex flex-wrap gap-2 align-items-center mb-2">
                                                 <span class="badge bg-primary">${task.ID}</span>
                                                 <span class="badge bg-light text-dark">${task.Type}</span>
                                                 ${task.Product ? `<span class="badge bg-info">${task.Product}</span>` : ''}
@@ -3442,52 +3442,20 @@
                                                 <span class="task-status status-${task.Status.toLowerCase().replace(' ', '-')}">${task.Status}</span>
                                                 <span class="task-priority priority-${task.Priority.toLowerCase()}">${task.Priority}</span>
                                             </div>
-                                        </div>
-                                    </div>
-
-                                    <!-- Details Grid -->
-                                    <div class="row g-4">
-                                        <!-- Type & Details -->
-                                        <div class="col-md-4">
-                                            <div class="p-3 bg-light rounded" style="border-left: 3px solid var(--primary);">
-                                                <div class="d-flex align-items-center mb-3">
-                                                    <i class="fas fa-tag me-2 text-primary"></i>
-                                                    <span class="fw-semibold">Type & Details</span>
-                                                </div>
-                                                <div class="ms-3">
-                                                    <div class="mb-2"><strong>Type:</strong> <span class="badge bg-primary">${task.Type}</span></div>
-                                                    ${task.Product ? `<div class="mb-2"><strong>Product:</strong> <span class="badge bg-info">${task.Product}</span></div>` : ''}
-                                                    ${task.Module ? `<div><strong>Module:</strong> <span class="badge bg-success">${task.Module}</span></div>` : ''}
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <!-- Status & Priority -->
-                                        <div class="col-md-4">
-                                            <div class="p-3 bg-light rounded" style="border-left: 3px solid var(--success);">
-                                                <div class="d-flex align-items-center mb-3">
-                                                    <i class="fas fa-chart-line me-2 text-success"></i>
-                                                    <span class="fw-semibold">Status & Priority</span>
-                                                </div>
-                                                <div class="ms-3">
-                                                    <div class="mb-2"><strong>Status:</strong> <span class="task-status status-${task.Status.toLowerCase().replace(' ', '-')}">${task.Status}</span></div>
-                                                    <div><strong>Priority:</strong> <span class="task-priority priority-${task.Priority.toLowerCase()}">${task.Priority}</span></div>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <!-- Timeline -->
-                                        <div class="col-md-4">
-                                            <div class="p-3 bg-light rounded" style="border-left: 3px solid var(--info);">
-                                                <div class="d-flex align-items-center mb-3">
-                                                    <i class="fas fa-calendar-plus me-2 text-info"></i>
-                                                    <span class="fw-semibold">Timeline</span>
-                                                </div>
-                                                <div class="ms-3">
-                                                    ${task['Created Date'] ? `<div class="mb-2"><strong>Created:</strong> <span class="text-muted">${task['Created Date']}</span></div>` : ''}
-                                                    ${task['Due Date'] ? `<div class="mb-2"><strong>Due:</strong> <span class="fw-semibold">${task['Due Date']}</span></div>` : ''}
-                                                    ${task['Status Update Date'] ? `<div><strong>Last Updated:</strong> <span class="text-muted">${task['Status Update Date']}</span></div>` : ''}
-                                                </div>
+                                            <!-- Timeline Info -->
+                                            <div class="d-flex flex-wrap gap-3 align-items-center text-muted small">
+                                                ${task['Created Date'] ? `<div class="d-flex align-items-center gap-1">
+                                                    <i class="fas fa-calendar-plus"></i>
+                                                    <span>Created: ${task['Created Date']}</span>
+                                                </div>` : ''}
+                                                ${task['Due Date'] ? `<div class="d-flex align-items-center gap-1 fw-semibold">
+                                                    <i class="fas fa-calendar-check"></i>
+                                                    <span>Due: ${task['Due Date']}</span>
+                                                </div>` : ''}
+                                                ${task['Status Update Date'] ? `<div class="d-flex align-items-center gap-1">
+                                                    <i class="fas fa-clock"></i>
+                                                    <span>Updated: ${task['Status Update Date']}</span>
+                                                </div>` : ''}
                                             </div>
                                         </div>
                                     </div>
