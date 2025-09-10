@@ -2033,14 +2033,14 @@
                         <span>Add Task</span>
                     </a>
 
-                    <button type="button" class="btn btn-secondary btn-sm" id="quickAddBtn" title="Quick Add Task">
+                    <button type="button" class="btn btn-secondary btn-sm" id="quickAddBtn" title="Quick Add Task" onclick="console.log('Quick Add button clicked directly')">
                         <i class="fas fa-bolt"></i>
                         <span>Quick Add</span>
                     </button>
 
                     <div class="nav-divider"></div>
 
-                    <button type="button" class="btn btn-secondary btn-sm" id="filterToggleBtn" title="Toggle Filters">
+                    <button type="button" class="btn btn-secondary btn-sm" id="filterToggleBtn" title="Toggle Filters" onclick="console.log('Filter button clicked directly')">
                         <i class="fas fa-filter"></i>
                         <span>Filters</span>
                     </button>
@@ -3060,6 +3060,25 @@
             initializeViewToggle();
             updateKanbanCounts();
             initializeTheme();
+
+            // Debug: Check if buttons exist
+            setTimeout(() => {
+                const quickAddBtn = document.getElementById('quickAddBtn');
+                const filterToggleBtn = document.getElementById('filterToggleBtn');
+                console.log('🔍 Debug - Buttons found:', {
+                    quickAddBtn: !!quickAddBtn,
+                    filterToggleBtn: !!filterToggleBtn
+                });
+                if (quickAddBtn) {
+                    console.log('Quick Add button element:', quickAddBtn);
+                    console.log('Quick Add button classes:', quickAddBtn.className);
+                }
+                if (filterToggleBtn) {
+                    console.log('Filter button element:', filterToggleBtn);
+                    console.log('Filter button classes:', filterToggleBtn.className);
+                }
+            }, 100);
+
             initializeQuickAdd();
             initializeSavedFilters();
             initializeFilterDrawer();
@@ -3883,7 +3902,7 @@
 
         // Quick Add functionality
         function initializeQuickAdd() {
-            console.log('Initializing Quick Add...');
+            console.log('🚀 Initializing Quick Add...');
 
             // Add a small delay to ensure DOM is ready
             setTimeout(() => {
@@ -4164,7 +4183,7 @@
 
         // Filter Drawer functionality
         function initializeFilterDrawer() {
-            console.log('Initializing Filter Drawer...');
+            console.log('🚀 Initializing Filter Drawer...');
 
             // Add a small delay to ensure DOM is ready
             setTimeout(() => {
