@@ -1848,6 +1848,16 @@
             color: #FF9500;
         }
 
+        .badge-modern.requester {
+            background: rgba(175, 82, 222, 0.1);
+            color: #AF52DE;
+        }
+
+        .badge-modern.business-unit {
+            background: rgba(255, 59, 48, 0.1);
+            color: #FF3B30;
+        }
+
         /* Status dots for compact layout */
         .status-dot.status-not-started { background: var(--gray-400); }
         .status-dot.status-in-progress { background: var(--primary); }
@@ -2596,6 +2606,21 @@
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <div class="form-group">
+                                    <label class="form-label">Requester</label>
+                                    <input class="form-control" type="text" name="Requester" placeholder="Who requested this task?">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label">Business Unit</label>
+                                    <input class="form-control" type="text" name="Business Unit" placeholder="Which business unit?">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="form-group">
                                     <label class="form-label">Due Date</label>
                                     <input class="form-control" type="date" name="Due Date">
                                 </div>
@@ -2714,6 +2739,21 @@
                                         <option value="{{ priority }}">{{ priority }}</option>
             {% endfor %}
           </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label">Requester</label>
+                                    <input class="form-control" type="text" name="Requester" placeholder="Who requested this task?">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label">Business Unit</label>
+                                    <input class="form-control" type="text" name="Business Unit" placeholder="Which business unit?">
                                 </div>
                             </div>
                         </div>
@@ -3562,6 +3602,8 @@
                                                 <span class="badge-modern type">${task.Type}</span>
                                                 ${task.Product ? `<span class="badge-modern product">${task.Product}</span>` : ''}
                                                 ${task.Module ? `<span class="badge-modern module">${task.Module}</span>` : ''}
+                                                ${task.Requester ? `<span class="badge-modern requester">${task.Requester}</span>` : ''}
+                                                ${task['Business Unit'] ? `<span class="badge-modern business-unit">${task['Business Unit']}</span>` : ''}
 
                                                 <!-- Status & Priority inline -->
                                                 <div class="status-priority-inline">

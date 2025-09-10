@@ -334,6 +334,8 @@ def add_task(data):
         due_date=parse_date_flexible(data.get('Due Date')),
         current_action_plan=data.get('Current Action Plan'),
         action_plan_history=f"[{datetime.today().strftime('%Y-%m-%d')}]\n{data.get('Current Action Plan', '').strip()}" if data.get('Current Action Plan') else '',
+        requester=data.get('Requester'),
+        business_unit=data.get('Business Unit'),
         custom_fields=custom_fields if custom_fields else None,
         user_id=current_user.id
     )
@@ -639,6 +641,10 @@ def edit_task():
         task.action_plan_history = data['Action Plan History']
     if 'Category' in data:
         task.category = data['Category']
+    if 'Requester' in data:
+        task.requester = data['Requester']
+    if 'Business Unit' in data:
+        task.business_unit = data['Business Unit']
 
     # Update custom fields
     if not task.custom_fields:

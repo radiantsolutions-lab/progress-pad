@@ -45,6 +45,8 @@ class Task(db.Model):
     current_action_plan = db.Column(db.Text)
     action_plan_history = db.Column(db.Text)
     category = db.Column(db.String(100))  # Added category field
+    requester = db.Column(db.String(100))  # New field: Requester
+    business_unit = db.Column(db.String(100))  # New field: Business Unit
 
     # User relationship
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
@@ -73,6 +75,8 @@ class Task(db.Model):
             'Current Action Plan': self.current_action_plan,
             'Action Plan History': self.action_plan_history,
             'Category': self.category,
+            'Requester': self.requester,
+            'Business Unit': self.business_unit,
             'is_overdue': False,
             'due_soon': False,
             'due_today': False
