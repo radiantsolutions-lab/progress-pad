@@ -2033,14 +2033,14 @@
                         <span>Add Task</span>
                     </a>
 
-                    <button type="button" class="btn btn-secondary btn-sm" id="quickAddBtn" title="Quick Add Task" onclick="console.log('Quick Add button clicked directly')">
+                    <button type="button" class="btn btn-secondary btn-sm" id="quickAddBtn" title="Quick Add Task" onclick="toggleQuickAdd()">
                         <i class="fas fa-bolt"></i>
                         <span>Quick Add</span>
                     </button>
 
                     <div class="nav-divider"></div>
 
-                    <button type="button" class="btn btn-secondary btn-sm" id="filterToggleBtn" title="Toggle Filters" onclick="console.log('Filter button clicked directly')">
+                    <button type="button" class="btn btn-secondary btn-sm" id="filterToggleBtn" title="Toggle Filters" onclick="toggleFilterDrawer()">
                         <i class="fas fa-filter"></i>
                         <span>Filters</span>
                     </button>
@@ -2076,11 +2076,12 @@
                 <div class="quick-add-wrapper">
                     <input type="text" class="form-control quick-add-input" id="quickAddInput"
                            placeholder="Type task description and press Enter..."
-                           autocomplete="off">
-                    <button class="btn btn-primary quick-add-submit" id="quickAddSubmit">
+                           autocomplete="off"
+                           onkeydown="if(event.key === 'Enter') { event.preventDefault(); submitQuickAddTask(); } else if(event.key === 'Escape') { event.preventDefault(); toggleQuickAdd(); }">
+                    <button class="btn btn-primary quick-add-submit" id="quickAddSubmit" onclick="submitQuickAddTask()">
                         <i class="fas fa-plus"></i>
                     </button>
-                    <button class="btn btn-outline-secondary quick-add-cancel" id="quickAddCancel">
+                    <button class="btn btn-outline-secondary quick-add-cancel" id="quickAddCancel" onclick="toggleQuickAdd()">
                         <i class="fas fa-times"></i>
                     </button>
                 </div>
@@ -3898,6 +3899,146 @@
                     // Clear file input
                     fileInput.value = '';
                 });
+        }
+
+        // Simple Quick Add toggle function
+        function toggleQuickAdd() {
+            console.log('🎯 toggleQuickAdd called');
+            const quickAddContainer = document.getElementById('quickAddContainer');
+            const quickAddInput = document.getElementById('quickAddInput');
+
+            if (!quickAddContainer) {
+                console.error('Quick Add container not found');
+                return;
+            }
+
+            const isVisible = quickAddContainer.style.display !== 'none';
+            console.log('Quick Add container visible:', isVisible);
+
+            if (isVisible) {
+                quickAddContainer.style.display = 'none';
+                if (quickAddInput) quickAddInput.value = '';
+            } else {
+                quickAddContainer.style.display = 'block';
+                if (quickAddInput) {
+                    quickAddInput.focus();
+                    quickAddInput.value = '';
+                }
+            }
+        }
+
+        // Simple Quick Add submit function
+        function submitQuickAddTask() {
+            console.log('🎯 submitQuickAddTask called');
+            const quickAddInput = document.getElementById('quickAddInput');
+            const quickAddSubmit = document.getElementById('quickAddSubmit');
+
+            if (!quickAddInput) {
+                console.error('Quick Add input not found');
+                return;
+            }
+
+            const description = quickAddInput.value.trim();
+            if (!description) {
+                showNotification('Please enter a task description.', 'warning');
+                quickAddInput.focus();
+                return;
+            }
+
+            // Show loading state
+            if (quickAddSubmit) {
+                quickAddSubmit.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+                quickAddSubmit.disabled = true;
+            }
+            quickAddInput.disabled = true;
+
+            // Create task data
+            const taskData = {
+                Type: 'Task',
+                Category: 'General',
+                Description: description,
+                Status: 'Not Started',
+                Priority: 'Medium',
+                'Created Date': new Date().toISOString().split('T')[0],
+                'Due Date': '',
+                'Status Update Date': new Date().toISOString().split('T')[0],
+                'Current Action Plan': description,
+                'Action Plan History': '',
+                Requester: '',
+                'Business Unit': ''
+            };
+
+            console.log('Submitting Quick Add task:', taskData);
+
+            fetch('/add_task', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(taskData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Quick Add response:', data);
+                if (data.status === 'success') {
+                    showNotification('Task added successfully!', 'success');
+                    toggleQuickAdd(); // Hide the container
+                    setTimeout(() => location.reload(), 1000);
+                } else {
+                    showNotification('Failed to add task: ' + (data.message || 'Unknown error'), 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Quick Add error:', error);
+                showNotification('Failed to add task. Please try again.', 'error');
+            })
+            .finally(() => {
+                // Reset button state
+                if (quickAddSubmit) {
+                    quickAddSubmit.innerHTML = '<i class="fas fa-plus"></i>';
+                    quickAddSubmit.disabled = false;
+                }
+                quickAddInput.disabled = false;
+            });
+        }
+
+        // Simple Filter toggle function
+        function toggleFilterDrawer() {
+            console.log('🎯 toggleFilterDrawer called');
+            const filterDrawer = document.getElementById('filterDrawer');
+            const filterOverlay = document.getElementById('filterOverlay');
+
+            if (!filterDrawer) {
+                console.error('Filter drawer not found');
+                return;
+            }
+
+            const isOpen = filterDrawer.classList.contains('open');
+            console.log('Filter drawer open:', isOpen);
+
+            if (isOpen) {
+                // Close
+                filterDrawer.classList.remove('open');
+                if (filterOverlay) {
+                    filterOverlay.classList.remove('active');
+                    setTimeout(() => {
+                        filterOverlay.style.display = 'none';
+                        filterDrawer.style.display = 'none';
+                    }, 300);
+                }
+                document.body.style.overflow = '';
+            } else {
+                // Open
+                filterDrawer.style.display = 'block';
+                setTimeout(() => {
+                    filterDrawer.classList.add('open');
+                    if (filterOverlay) {
+                        filterOverlay.style.display = 'block';
+                        setTimeout(() => {
+                            filterOverlay.classList.add('active');
+                        }, 10);
+                    }
+                }, 10);
+                document.body.style.overflow = 'hidden';
+            }
         }
 
         // Quick Add functionality
